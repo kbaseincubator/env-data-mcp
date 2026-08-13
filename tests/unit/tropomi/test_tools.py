@@ -112,7 +112,7 @@ def get_mock_http_error():
 
 
 @contextmanager
-def _mock_point_query(data=_MOCK_POINT_RESULT, unavailable=None):
+def _mock_point_query(data=_MOCK_POINT_RESULT, unavailable=None, substituted=None):
     """Patch get_variable_info and query_point for tropomi_point_query tests."""
     with (
         patch(
@@ -121,14 +121,14 @@ def _mock_point_query(data=_MOCK_POINT_RESULT, unavailable=None):
         ),
         patch(
             "env_data_mcp.sources.tropomi.tools.query_point",
-            return_value=(data, unavailable or []),
+            return_value=(data, unavailable or [], substituted or {}),
         ),
     ):
         yield
 
 
 @contextmanager
-def _mock_bbox_query(data=_MOCK_BBOX_RESULT, unavailable=None):
+def _mock_bbox_query(data=_MOCK_BBOX_RESULT, unavailable=None, substituted=None):
     """Patch get_variable_info and query_bbox for tropomi_bbox_query tests."""
     with (
         patch(
@@ -137,7 +137,7 @@ def _mock_bbox_query(data=_MOCK_BBOX_RESULT, unavailable=None):
         ),
         patch(
             "env_data_mcp.sources.tropomi.tools.query_bbox",
-            return_value=(data, unavailable or []),
+            return_value=(data, unavailable or [], substituted or {}),
         ),
     ):
         yield
