@@ -1,7 +1,7 @@
 # env-data-mcp
 
-[![CI](https://github.com/cohere-llc/env-data-mcp/actions/workflows/ci.yml/badge.svg)](https://github.com/cohere-llc/env-data-mcp/actions/workflows/ci.yml)
-[![codecov](https://codecov.io/gh/cohere-llc/env-data-mcp/branch/main/graph/badge.svg)](https://codecov.io/gh/cohere-llc/env-data-mcp)
+[![CI](https://github.com/kbaseincubator/env-data-mcp/actions/workflows/ci.yml/badge.svg)](https://github.com/kbaseincubator/env-data-mcp/actions/workflows/ci.yml)
+[![codecov](https://codecov.io/gh/kbaseincubator/env-data-mcp/branch/main/graph/badge.svg)](https://codecov.io/gh/kbaseincubator/env-data-mcp)
 
 MCP server that exposes environmental data — weather, soil, atmospheric composition,
 and satellite observations — as tools callable by any MCP-compatible AI assistant or
