@@ -30,19 +30,6 @@ def _validate_grouped_geometry_response(response: dict[str, Any]) -> dict[str, A
     return GroupedGeometryResponse.model_validate(response).model_dump(by_alias=True)
 
 
-def _with_substitutions(meta: dict[str, Any], substituted: dict[str, str]) -> dict[str, Any]:
-    """Record any processing stream served in place of the one requested.
-
-    Values are always reported under the variable name that was asked for, so
-    the substitution is noted here — as a ``requested -> served`` mapping — to
-    keep the provenance of every value reproducible.  The key is omitted
-    entirely when no substitution was made.
-    """
-    if substituted:
-        meta["substituted_variables"] = substituted
-    return meta
-
-
 @mcp.tool()
 def tropomi_available_variables() -> dict[str, Any]:
     """Return a list of available TROPOMI variables with descriptions."""
@@ -151,19 +138,17 @@ def tropomi_point_query(
         return _validate_grouped_geometry_response(
             {
                 "data": data,
-                "_meta": _with_substitutions(
-                    build_meta(
-                        source="tropomi",
-                        query_params=query_params,
-                        geometries_returned=len(data),
-                        total_records_returned=sum(len(r["records"]) for r in data),
-                        latency_s=latency,
-                        license_info=LICENSE_INFO,
-                        variables=variables,
-                        variable_info=var_info,
-                        unavailable_variables=unavailable,
-                    ),
-                    substituted,
+                "_meta": build_meta(
+                    source="tropomi",
+                    query_params=query_params,
+                    geometries_returned=len(data),
+                    total_records_returned=sum(len(r["records"]) for r in data),
+                    latency_s=latency,
+                    license_info=LICENSE_INFO,
+                    variables=variables,
+                    variable_info=var_info,
+                    unavailable_variables=unavailable,
+                    substituted_variables=substituted,
                 ),
             }
         )
@@ -265,19 +250,17 @@ def tropomi_bbox_query(
         return _validate_grouped_geometry_response(
             {
                 "data": data,
-                "_meta": _with_substitutions(
-                    build_meta(
-                        source="tropomi",
-                        query_params=query_params,
-                        geometries_returned=len(data),
-                        total_records_returned=sum(len(r["records"]) for r in data),
-                        latency_s=latency,
-                        license_info=LICENSE_INFO,
-                        variables=variables,
-                        variable_info=var_info,
-                        unavailable_variables=unavailable,
-                    ),
-                    substituted,
+                "_meta": build_meta(
+                    source="tropomi",
+                    query_params=query_params,
+                    geometries_returned=len(data),
+                    total_records_returned=sum(len(r["records"]) for r in data),
+                    latency_s=latency,
+                    license_info=LICENSE_INFO,
+                    variables=variables,
+                    variable_info=var_info,
+                    unavailable_variables=unavailable,
+                    substituted_variables=substituted,
                 ),
             }
         )

@@ -271,6 +271,30 @@ class TestTropomiQuery:
             )
         assert "OFFL-L2_NO2" in result["_meta"]["unavailable_variables"]
 
+    def test_substituted_variables_in_meta(self):
+        """Tests that a stream substitution from query_point appears in meta."""
+        with _mock_point_query(substituted={"OFFL-L2_CO": "RPRO-L2_CO"}):
+            result = tropomi_point_query(
+                latitude=33.84,
+                longitude=-116.49,
+                start_date="2024-01-03",
+                end_date="2024-01-05",
+                variables=["OFFL-L2_CO"],
+            )
+        assert result["_meta"]["substituted_variables"] == {"OFFL-L2_CO": "RPRO-L2_CO"}
+
+    def test_substituted_variables_present_when_none_substituted(self):
+        """Tests the key is always emitted, so the meta schema never varies."""
+        with _mock_point_query():
+            result = tropomi_point_query(
+                latitude=33.84,
+                longitude=-116.49,
+                start_date="2024-01-03",
+                end_date="2024-01-05",
+                variables=["OFFL-L2_CO"],
+            )
+        assert result["_meta"]["substituted_variables"] == {}
+
     def test_slow_query_warning(self):
         """Tests that a slow-query warning from check_runtime is passed through."""
         with (
@@ -439,6 +463,34 @@ class TestTropomiBboxQuery:
                 variables=["OFFL-L2_NO2"],
             )
         assert "OFFL-L2_NO2" in result["_meta"]["unavailable_variables"]
+
+    def test_substituted_variables_in_meta(self):
+        """Tests that a stream substitution from query_bbox appears in meta."""
+        with _mock_bbox_query(substituted={"OFFL-L2_CO": "RPRO-L2_CO"}):
+            result = tropomi_bbox_query(
+                min_lat=33.5,
+                max_lat=34.5,
+                min_lon=-117.0,
+                max_lon=-116.0,
+                start_date="2024-01-03",
+                end_date="2024-01-05",
+                variables=["OFFL-L2_CO"],
+            )
+        assert result["_meta"]["substituted_variables"] == {"OFFL-L2_CO": "RPRO-L2_CO"}
+
+    def test_substituted_variables_present_when_none_substituted(self):
+        """Tests the key is always emitted, so the meta schema never varies."""
+        with _mock_bbox_query():
+            result = tropomi_bbox_query(
+                min_lat=33.5,
+                max_lat=34.5,
+                min_lon=-117.0,
+                max_lon=-116.0,
+                start_date="2024-01-03",
+                end_date="2024-01-05",
+                variables=["OFFL-L2_CO"],
+            )
+        assert result["_meta"]["substituted_variables"] == {}
 
     def test_slow_query_warning(self):
         """Tests that a slow-query warning from check_runtime is passed through."""
