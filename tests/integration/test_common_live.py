@@ -429,6 +429,10 @@ class TestNonDefaultVariable:
         extra = next((v for v in all_vars if v not in spec.default_variables), None)
         if extra is None:
             pytest.skip(f"{spec.name}: every available variable is in the default set")
+        if not spec.expects_data(NH_RURAL):
+            pytest.skip(
+                f"{spec.name}: no data expected at nh_rural; skipping non-default variable check"
+            )
         result = spec.point_query(
             **_location_case_kwargs(spec, NH_RURAL),
             variables=[extra],
@@ -478,6 +482,10 @@ class TestMaxRuntimeGate:
     @pytest.mark.parametrize("query_mode", ["point", "bbox"])
     def test_zero_max_runtime_blocks_query(self, spec: AdapterSpec, query_mode: str) -> None:
         if query_mode == "point":
+            if not spec.expects_data(NH_RURAL):
+                pytest.skip(
+                    f"{spec.name}: no data expected at nh_rural; skipping max runtime check"
+                )
             result = spec.point_query(
                 **_location_case_kwargs(spec, NH_RURAL, max_runtime_s_override=0.0)
             )
@@ -489,6 +497,10 @@ class TestMaxRuntimeGate:
     @pytest.mark.parametrize("query_mode", ["point", "bbox"])
     def test_generous_max_runtime_allows_query(self, spec: AdapterSpec, query_mode: str) -> None:
         if query_mode == "point":
+            if not spec.expects_data(NH_RURAL):
+                pytest.skip(
+                    f"{spec.name}: no data expected at nh_rural; skipping max runtime check"
+                )
             result = spec.point_query(
                 **_location_case_kwargs(spec, NH_RURAL, max_runtime_s_override=3600.0)
             )
