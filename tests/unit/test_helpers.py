@@ -269,7 +269,12 @@ class TestBuildMeta:
 
     def test_substituted_variables_are_echoed(self) -> None:
         meta = build_meta(
-            "s", {}, 2, 3, 0.5, _LICENSE,
+            "s",
+            {},
+            2,
+            3,
+            0.5,
+            _LICENSE,
             substituted_variables={"OFFL-L2_CO": "RPRO-L2_CO"},
         )
         assert meta["substituted_variables"] == {"OFFL-L2_CO": "RPRO-L2_CO"}
