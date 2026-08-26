@@ -9,9 +9,9 @@ workflow.  Tools accept a location (point or bounding box) and a date range and 
 structured JSON with the data and a `_meta` block that includes the data licence,
 latency, and enough provenance information to reproduce the query.
 
-**Status:** Prototype complete — 9 sources operational (NASA POWER, SSURGO, SoilGrids,
-GBIF, Sentinel-5P, OCO-2, EMIT, ESS-DIVE, OpenAQ). CI matrix on Python 3.11/3.12,
-nightly integration tests, schema stability assertions.
+**Status:** Prototype complete; 6 sources have been made fully operational (NASA POWER,
+SSURGO, SoilGrids, GBIF, TROPOMI, OpenAQ); 3 sources are still only protoyped (OCO-2, EMIT,
+and ESS-DIVE).
 
 ---
 
@@ -145,16 +145,25 @@ See [Credential setup](#environment-variables) for how to obtain each token.
 | `soilgrids_bbox_query` | ISRIC SoilGrids v2 | none | Global soil properties over a bounding box |
 | `tropomi_point_query` | Sentinel-5P TROPOMI | none | Atmospheric composition at a point location |
 | `tropomi_bbox_query` | Sentinel-5P TROPOMI | none | Atmospheric composition over a bounding box |
+| `openaq_point_query` | OpenAQ v3 | API key (free) | Surface air quality measurements near a point |
+| `openaq_bbox_query` | OpenAQ v3 | API key (free) | Surface air quality measurements within a bounding box |
+
+
+\* For SSURGO tools, replace the (`*`) with one of: `area_summary`, `ecological_site`, `parent_material`, `seasonal_hydrology`, `soil_profile`, `soil_suitability`, `soil_temperature`, or `subsurface_barriers`.
+
+### Prototyped tools
+
+These tools are functional but may return subsets of requested data, not expose all dataset
+parameters, and not follow the standardized response schema.
+
+| Tool | Source | Auth | Description |
+|---|---|---|---|
 | `oco2_query` | OCO-2 GEOS L3 | NASA EarthData token | Daily XCO₂ column at a point |
 | `oco2_bbox_query` | OCO-2 GEOS L3 | NASA EarthData token | Daily XCO₂ column over a bounding box |
 | `emit_query` | NASA EMIT L2B | NASA EarthData token | Mineral identification at a point |
 | `emit_bbox_query` | NASA EMIT L2B | NASA EarthData token | Mineral identification over a bounding box |
 | `essdive_query` | ESS-DIVE | ESS-DIVE token (free) | DOE environmental field datasets near a point |
 | `essdive_bbox_query` | ESS-DIVE | ESS-DIVE token (free) | DOE environmental field datasets within a bounding box |
-| `openaq_query` | OpenAQ v3 | API key (free) | Surface air quality measurements near a point |
-| `openaq_bbox_query` | OpenAQ v3 | API key (free) | Surface air quality measurements within a bounding box |
-
-\* For SSURGO tools, replace the (`*`) with one of: `area_summary`, `ecological_site`, `parent_material`, `seasonal_hydrology`, `soil_profile`, `soil_suitability`, `soil_temperature`, or `subsurface_barriers`.
 
 ### Environment variables
 
@@ -247,7 +256,7 @@ sources are collected in [LICENSES.md](LICENSES.md).
 | SSURGO | Public domain (USDA) |
 | SoilGrids v2 | CC BY 4.0 |
 | GBIF | CC0 / CC BY / CC BY-NC per record |
-| Sentinel-5P | ESA Copernicus Open Access |
+| TROPOMI | ESA Copernicus Open Access |
 | OpenAQ | CC BY 4.0 |
 | OCO-2 | Public domain (NASA) |
 | EMIT | Public domain (NASA) |
