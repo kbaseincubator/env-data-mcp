@@ -842,8 +842,10 @@ def test_query_point_serves_a_withdrawn_stream_from_its_equivalent():
 
     assert len(results) == 1
     assert unavailable == []
-    # values are reported under the requested name, and the swap is declared
-    assert results[0]["records"][0]["OFFL-L2_CO"] == pytest.approx(0.031)
+    # values are reported under the name of the stream that served them
+    record = results[0]["records"][0]
+    assert record["RPRO-L2_CO"] == pytest.approx(0.031)
+    assert "OFFL-L2_CO" not in record
     assert substituted == {"OFFL-L2_CO": "RPRO-L2_CO"}
 
 
@@ -873,7 +875,7 @@ def test_query_point_reports_no_substitution_for_a_listed_stream():
 
 
 def test_query_bbox_serves_a_withdrawn_stream_from_its_equivalent():
-    """Bbox reads follow the same fallback and relabelling as point reads."""
+    """Bbox reads follow the same fallback and labelling as point reads."""
     mock_records = [
         {
             "variable_name": "RPRO-L2_CO",
@@ -901,9 +903,10 @@ def test_query_bbox_serves_a_withdrawn_stream_from_its_equivalent():
     assert unavailable == []
     assert substituted == {"OFFL-L2_CO": "RPRO-L2_CO"}
     all_values = [
-        record["OFFL-L2_CO"]
+        record["RPRO-L2_CO"]
         for geo in results
         for record in geo["records"]
-        if "OFFL-L2_CO" in record
+        if "RPRO-L2_CO" in record
     ]
     assert sorted(all_values) == pytest.approx(sorted(_VALID_VALS.ravel()))
+    assert not any("OFFL-L2_CO" in record for geo in results for record in geo["records"])

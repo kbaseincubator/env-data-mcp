@@ -94,7 +94,8 @@ def tropomi_point_query(
             a list of valid variable names. Defaults to a set of commonly used variables.
             A variable whose processing stream the catalogue no longer lists for the
             requested dates is served from an equivalent stream measuring the same
-            quantity; ``_meta.substituted_variables`` reports any such swap.
+            quantity; records are keyed by the serving stream's name and
+            ``_meta.substituted_variables`` reports any such swap.
         max_runtime_s: Optional maximum runtime in seconds; if the query is estimated to
             exceed this, a warning is returned instead of data. If not provided, assumed to
             be 60s.
@@ -112,9 +113,6 @@ def tropomi_point_query(
     try:
         point = PointInput(latitude=latitude, longitude=longitude)
         date_range = DateRange(start_date=start_date, end_date=end_date)
-
-        full_var_info = get_variable_info()
-        var_info = {k: full_var_info[k] for k in variables if k in full_var_info}
 
         _sd = parse_date(start_date)
         _ed = parse_date(end_date)
@@ -134,6 +132,10 @@ def tropomi_point_query(
             date_range.end_date,
             variables,
         )
+        full_var_info = get_variable_info()
+        var_info = {
+            k: full_var_info[k] for k in (*variables, *substituted.values()) if k in full_var_info
+        }
         latency = time.perf_counter() - t0
         return _validate_grouped_geometry_response(
             {
@@ -202,7 +204,8 @@ def tropomi_bbox_query(
             a list of valid variable names. Defaults to a set of commonly used variables.
             A variable whose processing stream the catalogue no longer lists for the
             requested dates is served from an equivalent stream measuring the same
-            quantity; ``_meta.substituted_variables`` reports any such swap.
+            quantity; records are keyed by the serving stream's name and
+            ``_meta.substituted_variables`` reports any such swap.
         max_runtime_s: Optional maximum runtime in seconds; if the query is estimated to
             exceed this, a warning is returned instead of data. If not provided, assumed to
             be 60s.
@@ -222,9 +225,6 @@ def tropomi_bbox_query(
     try:
         bbox = BboxInput(min_lat=min_lat, max_lat=max_lat, min_lon=min_lon, max_lon=max_lon)
         date_range = DateRange(start_date=start_date, end_date=end_date)
-
-        full_var_info = get_variable_info()
-        var_info = {k: full_var_info[k] for k in variables if k in full_var_info}
 
         _sd = parse_date(start_date)
         _ed = parse_date(end_date)
@@ -246,6 +246,10 @@ def tropomi_bbox_query(
             date_range.end_date,
             variables,
         )
+        full_var_info = get_variable_info()
+        var_info = {
+            k: full_var_info[k] for k in (*variables, *substituted.values()) if k in full_var_info
+        }
         latency = time.perf_counter() - t0
         return _validate_grouped_geometry_response(
             {

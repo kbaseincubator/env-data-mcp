@@ -137,16 +137,16 @@ def _resolve_granules(
 
 def _plan_reads(
     variables: list[str], start_date: str, end_date: str, geometry_string: str
-) -> tuple[list[tuple[str, VariableInfo, str]], set[str], dict[str, str]]:
+) -> tuple[list[tuple[VariableInfo, str]], set[str], dict[str, str]]:
     """Resolve every requested variable to the COGT reads that will serve it.
 
-    Returns the ``(requested name, variable served, granule path)`` work items,
-    the requested names this adapter knows nothing about, and the
-    ``requested -> served`` substitutions made by :func:`_resolve_granules`.
+    Returns the ``(variable served, granule path)`` work items, the requested
+    names this adapter knows nothing about, and the ``requested -> served``
+    substitutions made by :func:`_resolve_granules`.
     """
     var_info = get_full_variable_info()
     unavailable: set[str] = {var for var in variables if var not in var_info}
-    reads: list[tuple[str, VariableInfo, str]] = []
+    reads: list[tuple[VariableInfo, str]] = []
     substitutions: dict[str, str] = {}
     for name in variables:
         if name in unavailable:
@@ -154,7 +154,7 @@ def _plan_reads(
         served, paths = _resolve_granules(var_info[name], start_date, end_date, geometry_string)
         if served.name != name:
             substitutions[name] = served.name
-        reads.extend((name, served, path) for path in paths)
+        reads.extend((served, path) for path in paths)
     return reads, unavailable, substitutions
 
 
@@ -321,16 +321,18 @@ def query_point(
     Returns:
         Tuple of properties by geometry, list of unavailable variables, and the
         ``requested -> served`` processing streams substituted for any variable
-        whose own stream the catalogue no longer lists for this window.
+        whose own stream the catalogue no longer lists for this window.  Values
+        are keyed by the name of the variable that actually served them, so a
+        substituted variable appears under its serving stream's name.
     """
     geometry = _get_point_geometry_string(latitude=latitude, longitude=longitude)
     reads, unavailable, substitutions = _plan_reads(variables, start_date, end_date, geometry)
     records: list[dict[str, Any]] = []
     with ThreadPoolExecutor(max_workers=IO_WORKERS) as pool:
-        futures = {
-            pool.submit(_query_point_from_file, served, path, latitude, longitude): requested
-            for requested, served, path in reads
-        }
+        futures = [
+            pool.submit(_query_point_from_file, served, path, latitude, longitude)
+            for served, path in reads
+        ]
         for future in as_completed(futures):
             try:
                 rec = future.result()
@@ -338,15 +340,12 @@ def query_point(
                 # silently ignore failures for individual file reads to avoid failing the whole run
                 continue
             if rec:
-                # Report values under the name that was asked for, whichever
-                # stream ended up serving them.
-                rec["variable_name"] = futures[future]
                 records.append(rec)
     results = _format_results(records)
     has_data: set[str] = {
         var for geo in results for rec in geo["records"] for var in rec if var != "date"
     }
-    unavailable |= {var for var in variables if var not in has_data}
+    unavailable |= {var for var in variables if substitutions.get(var, var) not in has_data}
     return results, list(unavailable), substitutions
 
 
@@ -372,7 +371,9 @@ def query_bbox(
     Returns:
         Tuple of properties by geometry, list of unavailable variables, and the
         ``requested -> served`` processing streams substituted for any variable
-        whose own stream the catalogue no longer lists for this window.
+        whose own stream the catalogue no longer lists for this window.  Values
+        are keyed by the name of the variable that actually served them, so a
+        substituted variable appears under its serving stream's name.
     """
     geometry = _get_bbox_geometry_string(
         min_lat=min_lat, max_lat=max_lat, min_lon=min_lon, max_lon=max_lon
@@ -380,26 +381,20 @@ def query_bbox(
     reads, unavailable, substitutions = _plan_reads(variables, start_date, end_date, geometry)
     records: list[dict[str, Any]] = []
     with ThreadPoolExecutor(max_workers=IO_WORKERS) as pool:
-        futures = {
-            pool.submit(
-                _query_bbox_from_file, served, path, min_lat, max_lat, min_lon, max_lon
-            ): requested
-            for requested, served, path in reads
-        }
+        futures = [
+            pool.submit(_query_bbox_from_file, served, path, min_lat, max_lat, min_lon, max_lon)
+            for served, path in reads
+        ]
         for future in as_completed(futures):
             try:
                 recs = future.result()
             except Exception:
                 # silently ignore failures for individual file reads to avoid failing the whole run
                 continue
-            for rec in recs:
-                # Report values under the name that was asked for, whichever
-                # stream ended up serving them.
-                rec["variable_name"] = futures[future]
             records.extend(recs)
     results = _format_results(records)
     has_data: set[str] = {
         var for geo in results for rec in geo["records"] for var in rec if var != "date"
     }
-    unavailable |= {var for var in variables if var not in has_data}
+    unavailable |= {var for var in variables if substitutions.get(var, var) not in has_data}
     return results, list(unavailable), substitutions
