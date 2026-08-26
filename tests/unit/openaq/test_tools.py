@@ -54,6 +54,7 @@ def test_get_api_key_unavailable():
 # ---------------------------------------------------------------------------
 
 
+@pytest.mark.usefixtures("_set_api_key")
 def test_openaq_available_variables(httpx_mock, monkeypatch):
     monkeypatch.setattr("env_data_mcp.sources.openaq._query._AVAILABLE_PARAMETERS", None)
     httpx_mock.add_response(
@@ -72,6 +73,7 @@ def test_openaq_available_variables(httpx_mock, monkeypatch):
     assert result["_meta"]["latency_s"] < 1.0
 
 
+@pytest.mark.usefixtures("_set_api_key")
 def test_openaq_available_variables_http_error(httpx_mock, monkeypatch):
     monkeypatch.setattr("env_data_mcp.sources.openaq._query._AVAILABLE_PARAMETERS", None)
     httpx_mock.add_response(
