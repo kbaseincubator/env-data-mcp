@@ -87,19 +87,19 @@ def gbif_occurrence_point_query(
     Returns data about all species occurrences for the given location and date range.
     Global coverage, 1800s-present.
 
-    Args:
-        latitude: Decimal degrees, WGS84 (-90 to 90).
-        longitude: Decimal degrees, WGS84 (-180 to 180).
-        start_date: Inclusive start date, ISO 8601 date string, e.g., "2019-08-15".
-        end_date: Inclusive end date, ISO 8601 date string, e.g., "2019-08-16".
-        radius_km: Search radius in kilometers.
-        taxon_key: Optional GBIF taxon key to restrict results to a single taxon.
-        variables: GBIF occurrence variable names. Use the ``gbif_occurrence_available_variables()``
-            tool to get a list of valid variable names. Defaults to a standard set of commonly used
-            variables.
-        limit: Optional maximum number of occurrence records to return. Omit to return all records.
-        max_runtime_s: Optional maximum runtime in seconds; if the query is estimated to
-            exceed this, a warning is returned instead of data. If not provided, assumed to be 30 s.
+    ### Args
+    * __latitude__: Decimal degrees, WGS84 (-90 to 90).
+    * __longitude__: Decimal degrees, WGS84 (-180 to 180).
+    * __start_date__: Inclusive start date, ISO 8601 date string, e.g., "2019-08-15".
+    * __end_date__: Inclusive end date, ISO 8601 date string, e.g., "2019-08-16".
+    * __radius_km__: Search radius in kilometers.
+    * __taxon_key__: Optional GBIF taxon key to restrict results to a single taxon.
+    * __variables__: GBIF occurrence variable names. Use the ``gbif_occurrence_available_variables()``
+          tool to get a list of valid variable names. Defaults to a standard set of commonly used
+          variables.
+    * __limit__: Optional maximum number of occurrence records to return. Omit to return all records.
+    * __max_runtime_s__: Optional maximum runtime in seconds; if the query is estimated to
+          exceed this, a warning is returned instead of data. If not provided, assumed to be 30 s.
     """
     variables = list(variables)
     query_params: dict[str, Any] = {
@@ -222,20 +222,20 @@ def gbif_occurrence_bbox_query(
     Returns data about all species occurrences for the given region and date range.
     Global coverage, 1800s-present.
 
-    Args:
-        min_lat: South boundary, decimal degrees, WGS84 (-90 to 90).
-        max_lat: North boundary, decimal degrees, WGS84 (-90 to 90).
-        min_lon: West boundary, decimal degrees, WGS84 (-180 to 180).
-        max_lon: East boundary, decimal degrees, WGS84 (-180 to 180).
-        start_date: Inclusive start date, ISO 8601 date string, e.g., "2019-08-15".
-        end_date: Inclusive end date, ISO 8601 date string, e.g., "2019-08-16".
-        taxon_key: Optional GBIF taxon key to restrict results to a single taxon.
-        variables: GBIF occurrence variable names. Use the ``gbif_occurrence_available_variables()``
-            tool to get a list of valid variable names. Defaults to a standard set of commonly used
-            variables.
-        limit: Optional maximum number of occurrence records to return. Omit to return all records.
-        max_runtime_s: Optional maximum runtime in seconds; if the query is estimated to
-            exceed this, a warning is returned instead of data. If not provided, assumed to be 30 s.
+    ### Args
+    * __min_lat__: South boundary, decimal degrees, WGS84 (-90 to 90).
+    * __max_lat__: North boundary, decimal degrees, WGS84 (-90 to 90).
+    * __min_lon__: West boundary, decimal degrees, WGS84 (-180 to 180).
+    * __max_lon__: East boundary, decimal degrees, WGS84 (-180 to 180).
+    * __start_date__: Inclusive start date, ISO 8601 date string, e.g., "2019-08-15".
+    * __end_date__: Inclusive end date, ISO 8601 date string, e.g., "2019-08-16".
+    * __taxon_key__: Optional GBIF taxon key to restrict results to a single taxon.
+    * __variables__: GBIF occurrence variable names. Use the ``gbif_occurrence_available_variables()``
+          tool to get a list of valid variable names. Defaults to a standard set of commonly used
+          variables.
+    * __limit__: Optional maximum number of occurrence records to return. Omit to return all records.
+    * __max_runtime_s__: Optional maximum runtime in seconds; if the query is estimated to
+          exceed this, a warning is returned instead of data. If not provided, assumed to be 30 s.
     """
     variables = list(variables)
     query_params: dict[str, Any] = {

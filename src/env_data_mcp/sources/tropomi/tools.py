@@ -85,16 +85,16 @@ def tropomi_point_query(
     geometry, from the TROPOMI dataset via AWS.
     Global coverage, July 2018-present.
 
-    Args:
-        latitude: Decimal degrees, WGS84 (-90 to 90).
-        longitude: Decimal degrees, WGS84 (-180 to 180).
-        start_date: Inclusive start date, ISO 8601 date string, e.g., "2019-08-15",
-        end_date: Inclusive end date, ISO 8601 date string, e.g., "2019-08-15".
-        variables: TROPOMI variable names. Use the ``tropomi_available_variables()`` tool to get
-            a list of valid variable names. Defaults to a set of commonly used variables.
-        max_runtime_s: Optional maximum runtime in seconds; if the query is estimated to
-            exceed this, a warning is returned instead of data. If not provided, assumed to
-            be 60s.
+    ### Args
+    * __latitude__: Decimal degrees, WGS84 (-90 to 90).
+    * __longitude__: Decimal degrees, WGS84 (-180 to 180).
+    * __start_date__: Inclusive start date, ISO 8601 date string, e.g., "2019-08-15",
+    * __end_date__: Inclusive end date, ISO 8601 date string, e.g., "2019-08-15".
+    * __variables__: TROPOMI variable names. Use the ``tropomi_available_variables()`` tool to get
+          a list of valid variable names. Defaults to a set of commonly used variables.
+    * __max_runtime_s__: Optional maximum runtime in seconds; if the query is estimated to
+          exceed this, a warning is returned instead of data. If not provided, assumed to
+          be 60s.
     """
     variables = list(variables)
     query_params: dict[str, Any] = {
@@ -187,18 +187,18 @@ def tropomi_bbox_query(
     geometry, from the TROPOMI dataset via AWS.
     Global coverage, July 2018-present.
 
-    Args:
-        min_lat: South boundary, decimal degrees, WGS84 (-90 to 90).
-        max_lat: North boundary, decimal degrees, WGS84 (-90 to 90).
-        min_lon: West boundary, decimal degrees, WGS84 (-180 to 180).
-        max_lon: East boundary, decimal degrees, WGS84 (-180 to 180).
-        start_date: Inclusive start date, ISO 8601 date string, e.g., "2019-08-15",
-        end_date: Inclusive end date, ISO 8601 date string, e.g., "2019-08-15".
-        variables: TROPOMI variable names. Use the ``tropomi_available_variables()`` tool to get
-            a list of valid variable names. Defaults to a set of commonly used variables.
-        max_runtime_s: Optional maximum runtime in seconds; if the query is estimated to
-            exceed this, a warning is returned instead of data. If not provided, assumed to
-            be 60s.
+    ### Args
+    * __min_lat__: South boundary, decimal degrees, WGS84 (-90 to 90).
+    * __max_lat__: North boundary, decimal degrees, WGS84 (-90 to 90).
+    * __min_lon__: West boundary, decimal degrees, WGS84 (-180 to 180).
+    * __max_lon__: East boundary, decimal degrees, WGS84 (-180 to 180).
+    * __start_date__: Inclusive start date, ISO 8601 date string, e.g., "2019-08-15",
+    * __end_date__: Inclusive end date, ISO 8601 date string, e.g., "2019-08-15".
+    * __variables__: TROPOMI variable names. Use the ``tropomi_available_variables()`` tool to get
+          a list of valid variable names. Defaults to a set of commonly used variables.
+    * __max_runtime_s__: Optional maximum runtime in seconds; if the query is estimated to
+          exceed this, a warning is returned instead of data. If not provided, assumed to
+          be 60s.
     """
     variables = list(variables)
     query_params: dict[str, Any] = {

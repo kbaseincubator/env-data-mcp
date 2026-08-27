@@ -99,17 +99,17 @@ def nasa_power_merra2_point_query(
     geometry, from the NASA POWER dataset via anonymous S3/Zarr.
     Global coverage, 1980-present.
 
-    Args:
-        latitude: Decimal degrees, WGS84 (-90 to 90).
-        longitude: Decimal degrees, WGS84 (-180 to 180).
-        start_date: Inclusive start date, ISO 8601 date string, e.g., "2019-08-15".
-        end_date: Inclusive end date, ISO 8601 date string, e.g., "2019-08-15".
-        temporal_resolution: "hourly", "daily", "monthly", "annual", or "climatology".
-        variables: NASA POWER MERRA-2 variable names. Use the
-            ``nasa_power_merra2_available_variables()`` tool to get a list of valid variable names.
-            Defaults to a standard set of commonly used variables.
-        max_runtime_s: Optional maximum runtime in seconds; if the query is estimated to
-            exceed this, a warning is returned instead of data. If not provided, assumed to be 30 s.
+    ### Args
+    * __latitude__: Decimal degrees, WGS84 (-90 to 90).
+    * __longitude__: Decimal degrees, WGS84 (-180 to 180).
+    * __start_date__: Inclusive start date, ISO 8601 date string, e.g., "2019-08-15".
+    * __end_date__: Inclusive end date, ISO 8601 date string, e.g., "2019-08-15".
+    * __temporal_resolution__: "hourly", "daily", "monthly", "annual", or "climatology".
+    * __variables__: NASA POWER MERRA-2 variable names. Use the
+          ``nasa_power_merra2_available_variables()`` tool to get a list of valid variable names.
+          Defaults to a standard set of commonly used variables.
+    * __max_runtime_s__: Optional maximum runtime in seconds; if the query is estimated to
+          exceed this, a warning is returned instead of data. If not provided, assumed to be 30 s.
     """
     temporal_resolution = TemporalResolution(temporal_resolution)
     variables = list(variables)
@@ -199,17 +199,17 @@ def nasa_power_syn1deg_point_query(
     Returns daily surface radiation variables (shortwave and longwave, all-sky and clear-sky) from
     the NASA POWER dataset via anonymous S3/Zarr. Global coverage, 2001–present.
 
-    Args:
-        latitude: Decimal degrees, WGS84 (-90 to 90).
-        longitude: Decimal degrees, WGS84 (-180 to 180).
-        start_date: Inclusive start date, ISO 8601 date string, e.g., "2019-08-15".
-        end_date: Inclusive start date, ISO 8601 date string, e.g., "2019-08-15".
-        temporal_resolution: Temporal resolution of the data (e.g., daily, monthly).
-        variables: NASA POWER SYN1deg variable names. Use the
-            ``nasa_power_syn1deg_available_variables()`` tool to get a list of valid variable names.
-            Defaults to a standard set of commonly used surface radiation variables.
-        max_runtime_s: Optional maximum runtime in seconds; if the query is estimated to
-            exceed this, a warning is returned instead of data. If not provided, assumed to be 30 s.
+    ### Args
+    * __latitude__: Decimal degrees, WGS84 (-90 to 90).
+    * __longitude__: Decimal degrees, WGS84 (-180 to 180).
+    * __start_date__: Inclusive start date, ISO 8601 date string, e.g., "2019-08-15".
+    * __end_date__: Inclusive start date, ISO 8601 date string, e.g., "2019-08-15".
+    * __temporal_resolution__: Temporal resolution of the data (e.g., daily, monthly).
+    * __variables__: NASA POWER SYN1deg variable names. Use the
+          ``nasa_power_syn1deg_available_variables()`` tool to get a list of valid variable names.
+          Defaults to a standard set of commonly used surface radiation variables.
+    * __max_runtime_s__: Optional maximum runtime in seconds; if the query is estimated to
+          exceed this, a warning is returned instead of data. If not provided, assumed to be 30 s.
     """
     temporal_resolution = TemporalResolution(temporal_resolution)
     variables = list(variables)
@@ -301,19 +301,19 @@ def nasa_power_merra2_bbox_query(
     Returns values for points within the bounding box, as well as the nearest points outside
     the box in each direction (if they exist) to allow for interpolation at the edges.
 
-    Args:
-        min_lat: South boundary, decimal degrees, WGS84 (-90 to 90).
-        max_lat: North boundary, decimal degrees, WGS84 (-90 to 90).
-        min_lon: West boundary, decimal degrees, WGS84 (-180 to 180).
-        max_lon: East boundary, decimal degrees, WGS84 (-180 to 180).
-        start_date: Inclusive start date, ISO 8601 date string, e.g., "2019-08-15".
-        end_date: Inclusive end date, ISO 8601 date string, e.g., "2019-08-15".
-        temporal_resolution: Temporal resolution of the data (e.g., daily, monthly).
-        variables: NASA POWER MERRA-2 variable names. Use the
-            ``nasa_power_merra2_available_variables()`` tool to get a list of valid variable names.
-            Defaults to a standard set of commonly used variables.
-        max_runtime_s: Optional maximum runtime in seconds; if the query is estimated to
-            exceed this, a warning is returned instead of data. If not provided, assumed to be 30 s.
+    ### Args
+    * __min_lat__: South boundary, decimal degrees, WGS84 (-90 to 90).
+    * __max_lat__: North boundary, decimal degrees, WGS84 (-90 to 90).
+    * __min_lon__: West boundary, decimal degrees, WGS84 (-180 to 180).
+    * __max_lon__: East boundary, decimal degrees, WGS84 (-180 to 180).
+    * __start_date__: Inclusive start date, ISO 8601 date string, e.g., "2019-08-15".
+    * __end_date__: Inclusive end date, ISO 8601 date string, e.g., "2019-08-15".
+    * __temporal_resolution__: Temporal resolution of the data (e.g., daily, monthly).
+    * __variables__: NASA POWER MERRA-2 variable names. Use the
+          ``nasa_power_merra2_available_variables()`` tool to get a list of valid variable names.
+          Defaults to a standard set of commonly used variables.
+    * __max_runtime_s__: Optional maximum runtime in seconds; if the query is estimated to
+          exceed this, a warning is returned instead of data. If not provided, assumed to be 30 s.
     """
     temporal_resolution = TemporalResolution(temporal_resolution)
     variables = list(variables)
@@ -414,19 +414,19 @@ def nasa_power_syn1deg_bbox_query(
     Returns values for points within the bounding box, as well as the nearest points outside
     the box in each direction (if they exist) to allow for interpolation at the edges.
 
-    Args:
-        min_lat: South boundary, decimal degrees, WGS84 (-90 to 90).
-        max_lat: North boundary, decimal degrees, WGS84 (-90 to 90).
-        min_lon: West boundary, decimal degrees, WGS84 (-180 to 180).
-        max_lon: East boundary, decimal degrees, WGS84 (-180 to 180).
-        start_date: Inclusive start date, ISO 8601 date string, e.g., "2019-08-15".
-        end_date: Inclusive end date, ISO 8601 date string, e.g., "2019-08-05".
-        temporal_resolution: Temporal resolution of the data (e.g., daily, monthly).
-        variables: NASA POWER SYN1deg variable names. Use the
-            ``nasa_power_syn1deg_available_variables()`` tool to get a list of valid variable names.
-            Defaults to a set of commonly used variables.
-        max_runtime_s: Optional maximum runtime in seconds; if the query is estimated to
-            exceed this, a warning is returned instead of data. If not provided, assumed to be 30 s.
+    ### Args
+    * __min_lat__: South boundary, decimal degrees, WGS84 (-90 to 90).
+    * __max_lat__: North boundary, decimal degrees, WGS84 (-90 to 90).
+    * __min_lon__: West boundary, decimal degrees, WGS84 (-180 to 180).
+    * __max_lon__: East boundary, decimal degrees, WGS84 (-180 to 180).
+    * __start_date__: Inclusive start date, ISO 8601 date string, e.g., "2019-08-15".
+    * __end_date__: Inclusive end date, ISO 8601 date string, e.g., "2019-08-05".
+    * __temporal_resolution__: Temporal resolution of the data (e.g., daily, monthly).
+    * __variables__: NASA POWER SYN1deg variable names. Use the
+        ``nasa_power_syn1deg_available_variables()`` tool to get a list of valid variable names.
+        Defaults to a set of commonly used variables.
+    * __max_runtime_s__: Optional maximum runtime in seconds; if the query is estimated to
+        exceed this, a warning is returned instead of data. If not provided, assumed to be 30 s.
     """
     temporal_resolution = TemporalResolution(temporal_resolution)
     variables = list(variables)

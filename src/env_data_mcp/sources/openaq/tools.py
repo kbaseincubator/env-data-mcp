@@ -134,18 +134,18 @@ def openaq_point_query(
     Returns air quality data collected within the provided radius around
     a point location.
 
-    Args:
-        latitude: Decimal degrees, WGS84 (-90 to 90).
-        longitude: Decimal degrees, WGS84 (-180 to 180).
-        start_date: Inclusive start date, ISO 8601 date string, e.g., "2019-08-15".
-        end_date: Inclusive end date, ISO 8601 date string, e.g., "2019-08-16".
-        radius_km: Search radius in kilometers. Defaults to 5 km. Maximum 25.0 km.
-        variables: OpenAQ variable names. Use the ``openaq_available_variables()``
-            tool to get a list of valid variable names. Defaults to a standard set of
-            commonly used variables.
-        max_runtime_s: Optional maximum runtime in seconds. If the query is estimated to
-            exceed this, a warning is returned instead of data. If not provided, it is
-            assumed to be 30 s.
+    ### Args
+    * __latitude__: Decimal degrees, WGS84 (-90 to 90).
+    * __longitude__: Decimal degrees, WGS84 (-180 to 180).
+    * __start_date__: Inclusive start date, ISO 8601 date string, e.g., "2019-08-15".
+    * __end_date__: Inclusive end date, ISO 8601 date string, e.g., "2019-08-16".
+    * __radius_km__: Search radius in kilometers. Defaults to 5 km. Maximum 25.0 km.
+    * __variables__: OpenAQ variable names. Use the ``openaq_available_variables()``
+          tool to get a list of valid variable names. Defaults to a standard set of
+          commonly used variables.
+    * __max_runtime_s__: Optional maximum runtime in seconds. If the query is estimated to
+          exceed this, a warning is returned instead of data. If not provided, it is
+          assumed to be 30 s.
     """
     variables = list(variables)
     query_params: dict[str, Any] = {
@@ -265,19 +265,19 @@ def openaq_bbox_query(
 
     Returns air quality data collected within the bounding-box.
 
-    Args:
-        min_lat: South boundard, decimal degrees, WGS84 (-90 to 90).
-        max_lat: North boundard, decimal degrees, WGS84 (-90 to 90).
-        min_lon: West boundary, decimal degrees, WGS84 (-180 to 180).
-        max_lon: East boundary, decimal degrees, WGS84 (-180 to 180).
-        start_date: Inclusive start date, ISO 8601 date string, e.g., "2019-08-15".
-        end_date: Inclusive end date, ISO 8601 date string, e.g., "2019-08-16".
-        variables: OpenAQ variable names. Use the ``openaq_available_variables()``
-            tool to get a list of valid variable names. Defaults to a standard set of
-            commonly used variables.
-        max_runtime_s: Optional maximum runtime in seconds. If the query is estimated to
-            exceed this, a warning is returned instead of data. If not provided, it is
-            assumed to be 30 s.
+    ### Args
+    * __min_lat__: South boundard, decimal degrees, WGS84 (-90 to 90).
+    * __max_lat__: North boundard, decimal degrees, WGS84 (-90 to 90).
+    * __min_lon__: West boundary, decimal degrees, WGS84 (-180 to 180).
+    * __max_lon__: East boundary, decimal degrees, WGS84 (-180 to 180).
+    * __start_date__: Inclusive start date, ISO 8601 date string, e.g., "2019-08-15".
+    * __end_date__: Inclusive end date, ISO 8601 date string, e.g., "2019-08-16".
+    * __variables__: OpenAQ variable names. Use the ``openaq_available_variables()``
+          tool to get a list of valid variable names. Defaults to a standard set of
+          commonly used variables.
+    * __max_runtime_s__: Optional maximum runtime in seconds. If the query is estimated to
+          exceed this, a warning is returned instead of data. If not provided, it is
+          assumed to be 30 s.
     """
     variables = list(variables)
     query_params: dict[str, Any] = {
