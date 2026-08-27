@@ -1,0 +1,117 @@
+"""Gradio App entry point."""
+
+import collections
+import json
+
+import gradio as gr
+
+from env_data_mcp.server import mcp
+
+
+def _inputs_from_schema(parameters: dict) -> list:
+    props = parameters.get("properties", {})
+    required = set(parameters.get("required", []))
+    inputs = []
+    for name, schema in props.items():
+        label = f"{name.replace('_', ' ').title()}{'*' if name in required else ''}"
+        anyof_types = {s.get("type") for s in schema.get("anyOf", [])}
+        t = schema.get("type") or anyof_types
+        default = schema.get("default")
+        if "number" in t or "integer" in t:
+            inputs.append(gr.Number(label=label, value=default))
+        elif "array" in t:
+            if isinstance(default, (list, set, frozenset)):
+                default = ", ".join(str(v) for v in default)
+            inputs.append(gr.Textbox(label=f"{label} (comma-separated)", value=default or ""))
+        else:
+            inputs.append(
+                gr.Textbox(label=label, value=str(default) if default is not None else "")
+            )
+    return inputs
+
+
+def _make_fn(tool_fn, parmaeters):
+    props = list(parmaeters.get("properties", {}).items())
+
+    def wrapped(*args):
+        kwargs = {}
+        for (name, schema), val in zip(props, args, strict=True):
+            anyof_typs = {s.get("type") for s in schema.get("anyOf", [])}
+            t = schema.get("type") or anyof_typs
+            if val == "" or val is None:
+                if "default" in schema:
+                    kwargs[name] = schema["default"]
+            elif "array" in t:
+                try:
+                    kwargs[name] = json.loads(val)
+                except (json.JSONDecodeError, TypeError):
+                    kwargs[name] = [v.strip() for v in str(val).split(",") if v.strip()]
+            else:
+                kwargs[name] = val
+        return tool_fn(**kwargs)
+
+    return wrapped
+
+
+def launch_gui():
+    tools_list = mcp._tool_manager.list_tools()
+    print(f"[dashboard] {len(tools_list)} tools found")
+
+    CATEGORIES = {
+        "NASA POWER": "nasa_power",
+        "SoilGrids": "soilgrids",
+        "USDA SSURGO": "ssurgo",
+        "GBIF": "gbif",
+        "Sentinel-5 TROPOMI": "tropomi",
+        "OpenAQ": "openaq",
+    }
+
+    grouped_tools = collections.defaultdict(list)
+    uncategorized_tools = []
+
+    for tool in tools_list:
+        matched = False
+        for cat_label, prefix in CATEGORIES.items():
+            if tool.name.lower().startswith(prefix):
+                grouped_tools[cat_label].append(tool)
+                matched = True
+                break
+        if not matched:
+            uncategorized_tools.append(tool)
+
+    with gr.Blocks(title="Environmental Data Explorer") as gui:
+        gr.Markdown("# Environmental Data Explorer")
+        gr.Markdown("Directly query environmental datasets.")
+
+        with gr.Tabs(selected=0):
+            for cat_label in CATEGORIES:
+                if cat_label not in grouped_tools:
+                    continue
+
+                with gr.Tab(cat_label):
+                    gr.Markdown(f"### {cat_label}")
+
+                    for tool in grouped_tools[cat_label]:
+                        with gr.Accordion(tool.name.replace("_", " ").title(), open=False):
+                            gr.Markdown(tool.description or "")
+                            inputs = _inputs_from_schema(tool.parameters)
+                            output = gr.JSON(label="Response")
+                            gr.Button("Submit").click(
+                                fn=_make_fn(tool.fn, tool.parameters),
+                                inputs=inputs,
+                                outputs=output,
+                            )
+            if uncategorized_tools:
+                with gr.Tab("Prototyped Tools"):
+                    for tool in uncategorized_tools:
+                        with gr.Accordion(tool.name.replace("_", " ").title(), open=False):
+                            gr.Markdown(tool.description or "")
+                            inputs = _inputs_from_schema(tool.parameters)
+                            output = gr.JSON(label="Response")
+                            gr.Button("Submit").click(
+                                fn=_make_fn(tool.fn, tool.parameters),
+                                inputs=inputs,
+                                outputs=output,
+                            )
+
+        gui.launch(mcp_server=True)

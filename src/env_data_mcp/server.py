@@ -5,6 +5,7 @@ Registers all tool handlers via @mcp.tool() decorators in each source module.
 Source modules are imported below.
 """
 
+import argparse
 from mcp.server.fastmcp import FastMCP
 
 mcp = FastMCP(
@@ -31,9 +32,24 @@ from env_data_mcp.sources import oco2
 from env_data_mcp.sources import emit
 from env_data_mcp.sources import essdive
 
+# GUI dashboard
+from env_data_mcp.dashboard import launch_gui
+
 
 def main() -> None:
-    mcp.run()
+    parser = argparse.ArgumentParser("Environmental Data MCP Server")
+    parser.add_argument(
+        "--gui",
+        action="store_true",
+        help="Launch a GUI instead of stdio mode",
+    )
+    args = parser.parse_args()
+
+    if args.gui:
+        print("Launching GUI. Press CTRL+C to exit.")
+        launch_gui()
+    else:
+        mcp.run()
 
 
 if __name__ == "__main__":
