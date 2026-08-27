@@ -86,16 +86,39 @@ def launch_gui():
         "OpenAQ": "openaq",
     }
 
-    grouped_tools = collections.defaultdict(list)
+    subcategories = {
+        prefix: {
+            subcat or "primary"
+            for tool in tools_list
+            if tool.name.lower().startswith(prefix)
+            for subcat in [
+                tool.name.lower()
+                .removeprefix(f"{prefix}_")
+                .removesuffix("available_variables")
+                .removesuffix("available_rule_names")
+                .removesuffix("point_query")
+                .removesuffix("bbox_query")
+                .strip("_")
+            ]
+        }
+        for prefix in CATEGORIES.values()
+    }
+
+    grouped_tools = collections.defaultdict(lambda: collections.defaultdict(list))
     uncategorized_tools = []
 
     for tool in tools_list:
         matched = False
         for cat_label, prefix in CATEGORIES.items():
             if tool.name.lower().startswith(prefix):
-                grouped_tools[cat_label].append(tool)
-                matched = True
-                break
+                for subcat_label in subcategories[prefix]:
+                    subcat_str = f"_{subcat_label}" if subcat_label != "primary" else ""
+                    if tool.name.lower().startswith(f"{prefix}{subcat_str}"):
+                        grouped_tools[cat_label][subcat_label].append(tool)
+                        matched = True
+                        break
+                if not matched:
+                    grouped_tools[cat_label]["additional_tools"].append(tool)
         if not matched:
             uncategorized_tools.append(tool)
 
@@ -104,23 +127,32 @@ def launch_gui():
         gr.Markdown("Directly query environmental datasets.")
 
         with gr.Tabs(selected=0):
-            for cat_label in CATEGORIES:
+            for cat_label, prefix in CATEGORIES.items():
                 if cat_label not in grouped_tools:
                     continue
 
                 with gr.Tab(cat_label):
                     gr.Markdown(f"### {cat_label}")
 
-                    for tool in grouped_tools[cat_label]:
-                        with gr.Accordion(tool.name.replace("_", " ").title(), open=False):
-                            gr.Markdown(tool.description or "")
-                            inputs = _inputs_from_schema(tool.parameters)
-                            output = gr.JSON(label="Response")
-                            gr.Button("Submit").click(
-                                fn=_make_fn(tool.fn, tool.parameters),
-                                inputs=inputs,
-                                outputs=output,
-                            )
+                    for subcat_label in subcategories[prefix]:
+                        with gr.Tab(subcat_label):
+                            for tool in grouped_tools[cat_label][subcat_label]:
+                                with gr.Accordion(
+                                    tool.name.removeprefix(f"{prefix}_")
+                                    .removeprefix(f"{subcat_label}")
+                                    .lstrip("_")
+                                    .replace("_", " ")
+                                    .title(),
+                                    open=False,
+                                ):
+                                    gr.Markdown(tool.description or "")
+                                    inputs = _inputs_from_schema(tool.parameters)
+                                    output = gr.JSON(label="Response")
+                                    gr.Button("Submit").click(
+                                        fn=_make_fn(tool.fn, tool.parameters),
+                                        inputs=inputs,
+                                        outputs=output,
+                                    )
             if uncategorized_tools:
                 with gr.Tab("Prototyped Tools"):
                     for tool in uncategorized_tools:
