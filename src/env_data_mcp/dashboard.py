@@ -16,17 +16,37 @@ def _inputs_from_schema(parameters: dict) -> list:
         label = f"{name.replace('_', ' ').title()}{'*' if name in required else ''}"
         anyof_types = {s.get("type") for s in schema.get("anyOf", [])}
         t = schema.get("type") or anyof_types
+        r = schema.get("$ref")
         default = schema.get("default")
-        if "number" in t or "integer" in t:
-            inputs.append(gr.Number(label=label, value=default))
-        elif "array" in t:
-            if isinstance(default, (list, set, frozenset)):
-                default = ", ".join(str(v) for v in default)
-            inputs.append(gr.Textbox(label=f"{label} (comma-separated)", value=default or ""))
-        else:
+        if t:
+            if "number" in t or "integer" in t:
+                inputs.append(gr.Number(label=label, value=default))
+            elif "array" in t:
+                if isinstance(default, (list, set, frozenset)):
+                    default = ", ".join(str(v) for v in default)
+                inputs.append(gr.Textbox(label=f"{label} (comma-separated)", value=default or ""))
+            elif "string" in t:
+                inputs.append(
+                    gr.Textbox(label=label, value=str(default) if default is not None else "")
+                )
+            else:
+                msg = f"Unknown input type '{t}'"
+                raise TypeError(msg)
+            continue
+        elif r:
+            keys = r.lstrip("#/").split("/")
+            data = parameters
+            for key in keys:
+                data = data[key]
+            enum_vals = data.get("enum", [])
             inputs.append(
-                gr.Textbox(label=label, value=str(default) if default is not None else "")
+                gr.Dropdown(
+                    label=label, choices=enum_vals, value=(default if default else enum_vals[0])
+                )
             )
+        else:
+            msg = f"Unknown input schema '{schema}'"
+            raise TypeError(msg)
     return inputs
 
 
@@ -115,3 +135,11 @@ def launch_gui():
                             )
 
         gui.launch(mcp_server=True)
+
+
+def main():
+    launch_gui()
+
+
+if __name__ == "__main__":
+    main()
