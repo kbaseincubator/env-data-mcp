@@ -148,7 +148,7 @@ def launch_gui():
                                     gr.Markdown(tool.description or "")
                                     inputs = _inputs_from_schema(tool.parameters)
                                     output = gr.JSON(label="Response")
-                                    gr.Button("Submit").click(
+                                    gr.Button("Submit").click(  # type: ignore[reportAttributeAccessIssue]
                                         fn=_make_fn(tool.fn, tool.parameters),
                                         inputs=inputs,
                                         outputs=output,
@@ -160,7 +160,7 @@ def launch_gui():
                             gr.Markdown(tool.description or "")
                             inputs = _inputs_from_schema(tool.parameters)
                             output = gr.JSON(label="Response")
-                            gr.Button("Submit").click(
+                            gr.Button("Submit").click(  # type: ignore[reportAttributeAccessIssue]
                                 fn=_make_fn(tool.fn, tool.parameters),
                                 inputs=inputs,
                                 outputs=output,
