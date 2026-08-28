@@ -19,7 +19,7 @@ and ESS-DIVE).
 
 Clone the repo and pull in dependencies:
 ```bash
-git clone https://github.com/cohere-llc/env-data-mcp.git
+git clone https://github.com/kbaseincubator/env-data-mcp
 cd env-data-mcp
 uv sync
 ```
