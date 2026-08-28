@@ -122,7 +122,7 @@ def launch_gui():
         if not matched:
             uncategorized_tools.append(tool)
 
-    with gr.Blocks(title="Environmental Data Explorer", theme=gr.themes.Citrus()) as gui: # type: ignore[reportPrivateImportUsage]
+    with gr.Blocks(title="Environmental Data Explorer", theme=gr.themes.Citrus()) as gui:  # type: ignore[reportPrivateImportUsage]
         gr.Markdown("# Environmental Data Explorer")
         gr.Markdown("Directly query environmental datasets.")
 
