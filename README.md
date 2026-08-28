@@ -6,10 +6,10 @@
 MCP server that exposes environmental data — weather, soil, atmospheric composition,
 and satellite observations — as tools callable by any MCP-compatible AI assistant or
 workflow.  Tools accept a location (point or bounding box) and a date range and return
-structured JSON with the data and a `_meta` block that includes the data licence,
-latency, and enough provenance information to reproduce the query.
+structured JSON with the data and a `_meta` block that includes the data license,
+citations, query latency, and enough information to reproduce the query.
 
-**Status:** Prototype complete; 6 sources have been made fully operational (NASA POWER,
+**Status:** 6 sources have been made fully functional (NASA POWER,
 SSURGO, SoilGrids, GBIF, TROPOMI, OpenAQ); 3 sources are still only protoyped (OCO-2, EMIT,
 and ESS-DIVE).
 
@@ -17,18 +17,24 @@ and ESS-DIVE).
 
 ## Quick start
 
+Clone the repo and pull in dependencies:
 ```bash
 git clone https://github.com/cohere-llc/env-data-mcp.git
 cd env-data-mcp
 uv sync
+```
 
-# Start the server (stdio transport; runs until killed with Ctrl-C)
+### Command-Line MCP Usage
+
+Start the server (stdio transport; runs until killed with Ctrl-C)
+
+```bash
 uv run env-data-mcp
 ```
 
 The server prints no output on start; an MCP client connects via stdio.
 
-### Hello-world example
+#### Hello-world example
 
 With the server running, verify it works with this self-contained Python snippet:
 
@@ -54,6 +60,7 @@ async def main():
                     "longitude": -119.477,
                     "start_date": "2023-05-01",
                     "end_date": "2023-05-03",
+                    "variables": ["T2M", "PRECTOTCORR"],
                     "temporal_resolution": "daily",
                 },
             )
@@ -67,25 +74,68 @@ Expected output shape:
 
 ```json
 {
-  "data": [
-    {"date": "2023-05-01", "T2M": 14.2, "T2M_units": "C", "PRECTOTCORR": 0.0, ...},
-    {"date": "2023-05-02", "T2M": 15.8, "T2M_units": "C", "PRECTOTCORR": 1.3, ...},
-    {"date": "2023-05-03", "T2M": 13.1, "T2M_units": "C", "PRECTOTCORR": 0.0, ...}
+  'data': [
+    {
+      'geometry': {'type': 'Point', 'coordinates': [-119.375, 46.5]},
+      'records': [
+        {'date': '2023-05-01', 'T2M': 17.22998046875, 'T2M_units': 'C', 'PRECTOTCORR': 0.65997314453125, 'PRECTOTCORR_units': 'mm'},
+        {'date': '2023-05-02', 'T2M': 14.72998046875, 'T2M_units': 'C', 'PRECTOTCORR': 0.1500244140625, 'PRECTOTCORR_units': 'mm'},
+        {'date': '2023-05-03', 'T2M': 19.72998046875, 'T2M_units': 'C', 'PRECTOTCORR': 0.0, 'PRECTOTCORR_units': 'mm'}
+      ],
+      'latitude': 46.5,
+      'longitude': -119.375
+    }
   ],
-  "_meta": {
-    "source": "nasa_power",
-    "geometries_returned": 3,
-    "total_records_returned": 9,
-    "latency_s": 1.4,
-    "auth_required": false,
-    "success": true,
-    "license": "Public domain (NASA/US Government). Citation requested.",
-    "query_params": {"latitude": 46.253, "longitude": -119.477, ...}
+  '_meta': {
+    'source': 'nasa_power',
+    'success': True,
+    'geometries_returned': 1,
+    'total_records_returned': 3,
+    'latency_s': 0.803849,
+    'auth_required': False,
+    'auth_present': True,
+    'error': None,
+    'license': 'There are no restrictions on the use...',
+    'license_url': '',
+    'citation': 'NASA Prediction of Worldwide Energy Resources (POWER)...',
+    'query_params': {
+      'latitude': 46.253,
+      'longitude': -119.477,
+      'start_date': '2023-05-01',
+      'end_date': '2023-05-03',
+      'variables': ['T2M', 'PRECTOTCORR'],
+      'temporal_resolution': 'daily',
+      'max_runtime_s': 30.0
+    },
+    'variables': ['T2M', 'PRECTOTCORR'],
+    'variable_info': {
+      'T2M': {'description': 'Temperature at 2 Meters', 'units': 'C'},
+      'PRECTOTCORR': {'description': 'Precipitation Corrected', 'units': 'mm'}
+    },
+    'unavailable_variables': [],
+    'citation_urls': ['https:\/\/nasa-power.s3.amazonaws.com/CITATION.cff', 'https:\/\/power.larc.nasa.gov/docs/methodology/citations/'],
+    'description': "The Modern-Era Retrospective analysis...",
+    'description_url': 'https:\/\/registry.opendata.aws/nasa-power/',
+    'acknowledgements': ''
   }
 }
 ```
 
-### Register in VS Code (`.mcp.json`)
+### GUI
+To start the GUI (runs until killed with Ctrl-C):
+```bash
+uv run env-data-mcp --gui
+```
+
+Then navigate to the URL specified after `Running on local URL:` (typically `http://127.0.0.1:7860`)
+
+You should see something like this:
+
+![env-data-mcp dashboard](assets/dashboard.png)
+
+Click on a data provider, choose a dataset, and run the queries interactively. You will see formatted JSON output for query responses.
+
+## Register in VS Code (`.mcp.json`)
 
 Add to your VS Code workspace `.mcp.json` to make all tools available to GitHub Copilot:
 
@@ -107,7 +157,7 @@ Add to your VS Code workspace `.mcp.json` to make all tools available to GitHub 
 
 Replace `/path/to/env-data-mcp` with the absolute path to your local clone. The `${VAR}` syntax reads from your shell environment (or from a `.env` file if your MCP host supports it).
 
-### Register on JupyterHub / Lakehouse
+## Register on JupyterHub / Lakehouse
 
 If the package wheel has been installed into the JupyterHub environment:
 
@@ -129,7 +179,7 @@ If the package wheel has been installed into the JupyterHub environment:
 
 See [Credential setup](#environment-variables) for how to obtain each token.
 
-### Available tools
+# Available tools
 
 | Tool | Source | Auth | Description |
 |---|---|---|---|
@@ -151,7 +201,7 @@ See [Credential setup](#environment-variables) for how to obtain each token.
 
 \* For SSURGO tools, replace the (`*`) with one of: `area_summary`, `ecological_site`, `parent_material`, `seasonal_hydrology`, `soil_profile`, `soil_suitability`, `soil_temperature`, or `subsurface_barriers`.
 
-### Prototyped tools
+## Prototyped tools
 
 These tools are functional but may return subsets of requested data, not expose all dataset
 parameters, and not follow the standardized response schema.
@@ -165,7 +215,7 @@ parameters, and not follow the standardized response schema.
 | `essdive_query` | ESS-DIVE | ESS-DIVE token (free) | DOE environmental field datasets near a point |
 | `essdive_bbox_query` | ESS-DIVE | ESS-DIVE token (free) | DOE environmental field datasets within a bounding box |
 
-### Environment variables
+## Environment variables
 
 | Variable | Required by | Description |
 |---|---|---|
@@ -268,10 +318,11 @@ sources are collected in [LICENSES.md](LICENSES.md).
 
 To add a new data source:
 
-1. Create `src/env_data_mcp/sources/<name>.py` with a `LICENSE_INFO` dict constant and
-   one or more `@mcp.tool` functions.
-2. Write unit tests in `tests/unit/test_<name>.py` that mock all HTTP / S3 calls.
-3. Write an integration test in `tests/integration/test_<name>.py` marked
-   `@pytest.mark.integration`.
-4. Add licence text to `LICENSES.md`.
-5. Add a notebook cell to `notebooks/api_smoke_test.ipynb` demonstrating a real call.
+1. Create a `src/env_data_mcp/sources/<name>/` folder for the data source.
+2. At minimum include a `src/env_data_mcp/sources/<name>/tools.py` file for the MCP tools
+3. a. Include `<name>_available_variables`, `<name>_point_query`, and `<name>_bbox_query` functions decorated with `@mcp.tool()`
+3. b. Alternatively create `<name>_<dataset>_available_variables`, `<name>_<dataset>_point_query`, and `<name>_<dataset>_bbox_query` tool functions when the data source provides multiple datasets.
+4. Write unit tests in `tests/unit/<name>/` that mock all HTTP / S3 calls.
+5. Write integration tests in `tests/integration/test_<name>_live.py` marked
+   `@pytest.mark.integration` that call the live service and implement the `test_common_live.py` integration tests.
+6. Ensure all tool functions follow existing patterns for input arguments and return common response schema validated using `src/env_data_mcp/models.py` and `src/env_data_mcp/helpers.py`.
