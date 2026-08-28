@@ -94,10 +94,11 @@ def gbif_occurrence_point_query(
     * __end_date__: Inclusive end date, ISO 8601 date string, e.g., "2019-08-16".
     * __radius_km__: Search radius in kilometers.
     * __taxon_key__: Optional GBIF taxon key to restrict results to a single taxon.
-    * __variables__: GBIF occurrence variable names. Use the ``gbif_occurrence_available_variables()``
-          tool to get a list of valid variable names. Defaults to a standard set of commonly used
-          variables.
-    * __limit__: Optional maximum number of occurrence records to return. Omit to return all records.
+    * __variables__: GBIF occurrence variable names. Use the
+          ``gbif_occurrence_available_variables()`` tool to get a list of valid variable names.
+          Defaults to a standard set of commonly used variables.
+    * __limit__: Optional maximum number of occurrence records to return. Omit to return all
+          records.
     * __max_runtime_s__: Optional maximum runtime in seconds; if the query is estimated to
           exceed this, a warning is returned instead of data. If not provided, assumed to be 30 s.
     """
@@ -230,10 +231,11 @@ def gbif_occurrence_bbox_query(
     * __start_date__: Inclusive start date, ISO 8601 date string, e.g., "2019-08-15".
     * __end_date__: Inclusive end date, ISO 8601 date string, e.g., "2019-08-16".
     * __taxon_key__: Optional GBIF taxon key to restrict results to a single taxon.
-    * __variables__: GBIF occurrence variable names. Use the ``gbif_occurrence_available_variables()``
-          tool to get a list of valid variable names. Defaults to a standard set of commonly used
-          variables.
-    * __limit__: Optional maximum number of occurrence records to return. Omit to return all records.
+    * __variables__: GBIF occurrence variable names. Use the
+          ``gbif_occurrence_available_variables()`` tool to get a list of valid variable names.
+          Defaults to a standard set of commonly used variables.
+    * __limit__: Optional maximum number of occurrence records to return. Omit to return all
+          records.
     * __max_runtime_s__: Optional maximum runtime in seconds; if the query is estimated to
           exceed this, a warning is returned instead of data. If not provided, assumed to be 30 s.
     """
