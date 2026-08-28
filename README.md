@@ -18,7 +18,7 @@ SSURGO, SoilGrids, GBIF, TROPOMI, OpenAQ, ESS-DIVE); 2 sources are still only pr
 
 Clone the repo and pull in dependencies:
 ```bash
-git clone https://github.com/cohere-llc/env-data-mcp.git
+git clone https://github.com/kbaseincubator/env-data-mcp
 cd env-data-mcp
 uv sync
 ```
