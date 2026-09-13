@@ -98,12 +98,11 @@ class QuotaGovernor:
         while self._calls and now - self._calls[0] >= self.window_s:
             self._calls.popleft()
 
-    def snapshot(self) -> dict[str, Any]:
-        now = time.monotonic()
-        with self._lock:
-            self._prune(now)
-            used = len(self._calls)
-            resets_in = (self._calls[0] + self.window_s - now) if self._calls else 0.0
+    def _snapshot_locked(self, now: float) -> dict[str, Any]:
+        """The quota dict at ``now``; the caller holds ``_lock`` (so the numbers match its decision)."""
+        self._prune(now)
+        used = len(self._calls)
+        resets_in = (self._calls[0] + self.window_s - now) if self._calls else 0.0
         return {
             "limit": self.limit,
             "window_s": self.window_s,
@@ -111,6 +110,10 @@ class QuotaGovernor:
             "remaining": max(0, self.limit - used),
             "resets_in_s": round(max(0.0, resets_in), 1),
         }
+
+    def snapshot(self) -> dict[str, Any]:
+        with self._lock:
+            return self._snapshot_locked(time.monotonic())
 
     def try_acquire(self) -> tuple[bool, dict[str, Any]]:
         now = time.monotonic()
@@ -121,7 +124,7 @@ class QuotaGovernor:
             else:
                 self._calls.append(now)
                 allowed = True
-        return allowed, self.snapshot()
+            return allowed, self._snapshot_locked(now)
 
     def reset(self) -> None:
         with self._lock:
@@ -294,7 +297,7 @@ def iso_or_none(value: Any) -> str | None:
     """Milliseconds-since-epoch (USGS) or an ISO string → ISO 8601 UTC string; None stays None."""
     if value is None or value == "":
         return None
-    if isinstance(value, int | float):
+    if isinstance(value, (int, float)):  # noqa: UP038 — a tuple reads plainly and predates PEP 604
         return (
             datetime.datetime.fromtimestamp(float(value) / 1000.0, tz=datetime.UTC)
             .replace(microsecond=0)

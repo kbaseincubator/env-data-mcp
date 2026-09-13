@@ -10,7 +10,7 @@ structured JSON with the data and a `_meta` block that includes the data license
 citations, query latency, and enough information to reproduce the query.
 
 **Status:** 6 sources have been made fully functional (NASA POWER,
-SSURGO, SoilGrids, GBIF, TROPOMI, OpenAQ); 3 sources are still only protoyped (OCO-2, EMIT,
+SSURGO, SoilGrids, GBIF, TROPOMI, OpenAQ); 3 sources are still only prototyped (OCO-2, EMIT,
 and ESS-DIVE).  The **`feeds` family** (live events: EONET, USGS earthquakes, NASA FIRMS, NWS
 alerts, USGS Water Data, Open-Meteo) and six **point accessors** (Daymet, Macrostrat, 3DEP
 elevation, ARM, EIA, ERA5 via CDS) return the same `{data, _meta}` shape with a shared event
