@@ -99,7 +99,7 @@ class QuotaGovernor:
             self._calls.popleft()
 
     def _snapshot_locked(self, now: float) -> dict[str, Any]:
-        """The quota dict at ``now``; the caller holds ``_lock`` (so the numbers match its decision)."""
+        """The quota dict at ``now``; the caller holds ``_lock`` (numbers match its decision)."""
         self._prune(now)
         used = len(self._calls)
         resets_in = (self._calls[0] + self.window_s - now) if self._calls else 0.0
@@ -297,7 +297,7 @@ def iso_or_none(value: Any) -> str | None:
     """Milliseconds-since-epoch (USGS) or an ISO string → ISO 8601 UTC string; None stays None."""
     if value is None or value == "":
         return None
-    if isinstance(value, (int, float)):  # noqa: UP038 — a tuple reads plainly and predates PEP 604
+    if isinstance(value, (int, float)):  # noqa: UP038
         return (
             datetime.datetime.fromtimestamp(float(value) / 1000.0, tz=datetime.UTC)
             .replace(microsecond=0)

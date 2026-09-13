@@ -143,7 +143,7 @@ def usgs_water_latest(
                     LICENSE_INFO,
                     ttl_s=TTL_S,
                     quota=gov.snapshot(),
-                    auth_required=False,  # the key is OPTIONAL (a higher tier); it was present and rejected
+                    auth_required=False,  # an OPTIONAL key was present and rejected
                     auth_present=False,
                     success=False,
                     error=f"{exc} — check {KEY_NAME}",
