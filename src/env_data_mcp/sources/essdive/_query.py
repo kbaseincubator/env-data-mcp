@@ -100,7 +100,11 @@ def query_bbox(
     if keywords:
         params["keywords"] = keywords
     packages = _query_for_packages(
-        client, params, api_key, BBox(min_lat, max_lat, min_lon, max_lon)
+        client, params, api_key, BBox(
+            min_lat=min_lat,
+            min_lon=min_lon, 
+            max_lat=max_lat,
+            max_lon=max_lon)
     )
     return _generate_response(packages)
 
@@ -122,7 +126,7 @@ def _build_headers(api_key: str | None) -> dict[str, str] | None:
 def _extract_data_file(data: dict[str, Any]) -> DataFile:
     return DataFile(
         url=data.get("contentUrl", ""),
-        encoding=data.get("encondingFormat", ""),
+        encoding=data.get("encodingFormat", ""),
         name=data.get("name", ""),
         size_kb=data.get("contentSize", 0),
     )
@@ -148,9 +152,8 @@ def _extract_geometry(data: dict[str, Any]) -> BBox:
     )
 
 
-def _extract_geometries(data: dict[str, Any]) -> list[BBox]:
+def _extract_geometries(geos: list[dict[str, Any]]) -> list[BBox]:
     bboxes: list[BBox] = []
-    geos = data.get("spatialCoverage")
     if geos:
         if isinstance(geos, list):
             for geo in geos:
