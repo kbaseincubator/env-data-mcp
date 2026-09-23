@@ -3,6 +3,7 @@
 from .common import AdapterSpec
 from .test_gbif_live import OCCURRENCE_SPEC as GBIF_OCCURRENCE_SPEC
 from .test_nasa_power_live import MERRA2_SPEC, SYN1DEG_SPEC
+from .test_openaq_live import OPENAQ_SPEC
 from .test_soilgrids_live import SOILGRIDS_SPEC
 from .test_ssurgo_live import ALL_SSURGO_SPECS
 from .test_tropomi_live import TROPOMI_SPEC
@@ -13,6 +14,8 @@ ALL_ADAPTER_SPECS: list[AdapterSpec] = [
     SYN1DEG_SPEC,
     # GBIF specs
     GBIF_OCCURRENCE_SPEC,
+    # OpenAQ specs
+    OPENAQ_SPEC,
     # SoilGrids specs
     SOILGRIDS_SPEC,
     # SSURGO specs (7 variable-based query types; soil_suitability excluded; uses rule_names)

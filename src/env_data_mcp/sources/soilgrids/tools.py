@@ -82,16 +82,16 @@ def soilgrids_point_query(
     Note: if the radius you specify is smaller than the 250 m resolution of the SoilGrids
     data, no results may be returned.
 
-    Args:
-        latitude: Decimal degrees, WGS84 (-90 to 90).
-        longitude: Decimal degrees, WGS84 (-180 to 180).
-        radius_km: Search radius in kilometers.
-        variables: SoilGrids variable names. Use the ``soilgrids_available_variables()`` tool to
-            get a list of valid variable names. Defaults to a set of commonly
-            used variables near the surface.
-        max_runtime_s: Optional maximum runtime in seconds; if the query is estimated to
-            exceed this, a warning is returned instead of data. If not provided, assumed
-            to be 60 s.
+    ### Args
+    * __latitude__: Decimal degrees, WGS84 (-90 to 90).
+    * __longitude__: Decimal degrees, WGS84 (-180 to 180).
+    * __radius_km__: Search radius in kilometers.
+    * __variables__: SoilGrids variable names. Use the ``soilgrids_available_variables()`` tool to
+          get a list of valid variable names. Defaults to a set of commonly
+          used variables near the surface.
+    * __max_runtime_s__: Optional maximum runtime in seconds; if the query is estimated to
+          exceed this, a warning is returned instead of data. If not provided, assumed
+          to be 60 s.
     """
     variables = list(variables)
     query_params: dict[str, Any] = {
@@ -184,17 +184,17 @@ def soilgrids_bbox_query(
     Note: if your bounding box is smaller than the 250 m resoltion of the SoilGrids data,
     no results may be returned.
 
-    Args:
-        min_lat: South boundary, decimal degrees, WGS84 (-90 to 90).
-        max_lat: North boundary, decimal degrees, WGS84 (-90 to 90).
-        min_lon: West boundary, decimal degrees, WGS84 (-180 to 180).
-        max_lon: East boundary, decimal degrees, WGS84 (-180 to 180).
-        variables: SoilGrids variable names. Use the ``soilgrids_available_variables()`` tool to
-            get a list of valid variable names. Defaults to a set of commonly
-            used variables near the surface.
-        max_runtime_s: Optional maximum runtime in seconds; if the query is estimated to
-            exceed this, a warning is returned instead of data. If not provided, assumed
-            to be 60 s.
+    ### Args
+    * __min_lat__: South boundary, decimal degrees, WGS84 (-90 to 90).
+    * __max_lat__: North boundary, decimal degrees, WGS84 (-90 to 90).
+    * __min_lon__: West boundary, decimal degrees, WGS84 (-180 to 180).
+    * __max_lon__: East boundary, decimal degrees, WGS84 (-180 to 180).
+    * __variables__: SoilGrids variable names. Use the ``soilgrids_available_variables()`` tool to
+          get a list of valid variable names. Defaults to a set of commonly
+          used variables near the surface.
+    * __max_runtime_s__: Optional maximum runtime in seconds; if the query is estimated to
+          exceed this, a warning is returned instead of data. If not provided, assumed
+          to be 60 s.
     """
     variables = list(variables)
     query_params: dict[str, Any] = {

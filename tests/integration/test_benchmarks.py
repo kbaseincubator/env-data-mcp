@@ -1,7 +1,7 @@
 """Benchmark integration tests for env-data-mcp sources.
 
-Runs a Phase-2 matrix of (source × date-range × location × bbox-size) queries,
-checks point/bbox spatial consistency for a small 0.5°×0.5° window, records
+Runs a Phase-2 matrix of (source x date-range x location x bbox-size) queries,
+checks point/bbox spatial consistency for a small 0.5°x0.5° window, records
 ``_meta["latency_s"]`` from every call, fits a per-source 2-D timing model
     t_est(n_days, area_deg2) = α + β_n·n_days + β_a·area_deg2
 and writes the fitted coefficients + raw timing data to
@@ -23,7 +23,7 @@ from dataclasses import dataclass
 from datetime import UTC, datetime
 from math import sqrt
 from pathlib import Path
-from typing import Any
+from typing import Any, TypedDict
 
 import numpy as np
 import pytest
@@ -39,7 +39,7 @@ from env_data_mcp.sources.nasa_power import (
 from env_data_mcp.sources.nasa_power._client import _clear_store_cache
 from env_data_mcp.sources.nasa_power._constants import TemporalResolution
 from env_data_mcp.sources.oco2 import oco2_bbox_query, oco2_query
-from env_data_mcp.sources.openaq import openaq_bbox_query, openaq_query
+from env_data_mcp.sources.openaq import openaq_bbox_query, openaq_point_query
 from env_data_mcp.sources.soilgrids import soilgrids_bbox_query, soilgrids_point_query
 from env_data_mcp.sources.ssurgo import (
     ssurgo_area_summary_bbox_query,
@@ -79,9 +79,20 @@ _SCENARIOS: list[dict[str, Any]] = [
 # Sources that are skipped for the 1-month scenario to stay inside the 5-min budget
 _SLOW_SOURCES = {"oco2", "emit"}
 
+
 # Small consistency-check bbox — 0.5° × 0.5° centred on the reference point
+class _Bbox(TypedDict):
+    """The four keyword arguments a *_bbox_query takes - typed so `**bbox` unpacks onto exactly
+    those parameters (pyright unpacks a plain dict[str, float] onto every keyword parameter)."""
+
+    min_lat: float
+    max_lat: float
+    min_lon: float
+    max_lon: float
+
+
 _BBOX_HALF = 0.25
-_BBOX = {
+_BBOX: _Bbox = {
     "min_lat": _LAT - _BBOX_HALF,
     "max_lat": _LAT + _BBOX_HALF,
     "min_lon": _LON - _BBOX_HALF,
@@ -184,7 +195,7 @@ def _record(
     )
 
 
-def _make_bbox(lat: float, lon: float, half: float) -> dict[str, float]:
+def _make_bbox(lat: float, lon: float, half: float) -> _Bbox:
     """Return a min/max lat/lon bbox dict centred on (lat, lon) with given half-width."""
     return {
         "min_lat": lat - half,
@@ -846,13 +857,12 @@ def test_tropomi_point_bbox_consistent():
 @pytest.mark.benchmark
 @pytest.mark.parametrize("sc", _SCENARIOS, ids=lambda s: s["name"])
 def test_openaq_timing(sc, _openaq_key):
-    result = openaq_query(
+    result = openaq_point_query(
         latitude=_LAT,
         longitude=_LON,
         radius_km=50.0,
         start_date=sc["start"],
         end_date=sc["end"],
-        limit=200,
     )
     _assert_or_skip(result, "openaq")
     _record("openaq", sc["name"], sc["n_days"], result)
@@ -868,7 +878,6 @@ def test_openaq_bbox_timing(sc, bz, _openaq_key):
         **_make_bbox(_LAT, _LON, bz["half"]),
         start_date=sc["start"],
         end_date=sc["end"],
-        limit=200,
     )
     _assert_or_skip(result, "openaq/bbox")
     _record(
@@ -885,13 +894,12 @@ def test_openaq_bbox_timing(sc, bz, _openaq_key):
 @pytest.mark.benchmark
 @pytest.mark.parametrize("loc", _EXTRA_LOCATIONS, ids=lambda loc: loc["name"])
 def test_openaq_extra_location_timing(loc, _openaq_key):
-    result = openaq_query(
+    result = openaq_point_query(
         latitude=loc["lat"],
         longitude=loc["lon"],
         radius_km=50.0,
         start_date="2019-08-01",
         end_date="2019-08-31",
-        limit=200,
     )
     _assert_or_skip(result, f"openaq/{loc['name']}")
     _record("openaq", "1month", 31, result, location=loc["name"])
@@ -901,19 +909,17 @@ def test_openaq_extra_location_timing(loc, _openaq_key):
 @pytest.mark.integration
 @pytest.mark.benchmark
 def test_openaq_point_bbox_consistent(_openaq_key):
-    pt = openaq_query(
+    pt = openaq_point_query(
         latitude=_LAT,
         longitude=_LON,
         radius_km=50.0,
         start_date="2019-08-19",
         end_date="2019-08-19",
-        limit=200,
     )
     bx = openaq_bbox_query(
         **_BBOX,
         start_date="2019-08-19",
         end_date="2019-08-19",
-        limit=200,
     )
     _assert_or_skip(pt, "openaq/point")
     _assert_or_skip(bx, "openaq/bbox")

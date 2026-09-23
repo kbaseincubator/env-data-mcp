@@ -472,14 +472,14 @@ def ssurgo_soil_profile_point_query(
 ) -> dict[str, Any]:
     """Query USDA SSURGO soil profile data for a point location.
 
-    Args:
-        latitude: Decimal degrees, WGS84 (-90 to 90).
-        longitude: Decimal degrees, WGS84 (-180 to 180).
-        variables: SSURGO soil profile variable names. Use the
-            ``ssurgo_soil_profile_available_variables()`` tool to get a list of
-            valid variable names. Defaults to a set of commonly used variables.
-        max_runtime_s: Optional maximum runtime in seconds; if the query is estimated to
-            exceed this, a warning is returned instead of data. If not provided, assumed to be 30 s.
+    ### Args
+    * __latitude__: Decimal degrees, WGS84 (-90 to 90).
+    * __longitude__: Decimal degrees, WGS84 (-180 to 180).
+    * __variables__: SSURGO soil profile variable names. Use the
+          ``ssurgo_soil_profile_available_variables()`` tool to get a list of
+          valid variable names. Defaults to a set of commonly used variables.
+    * __max_runtime_s__: Optional maximum runtime in seconds; if the query is estimated to
+          exceed this, a warning is returned instead of data. If not provided, assumed to be 30 s.
     """
     return _point_query(
         latitude,
@@ -503,16 +503,16 @@ def ssurgo_soil_profile_bbox_query(
 ) -> dict[str, Any]:
     """Query USDA SSURGO soil profile data for all map units in a bounding box.
 
-    Args:
-        min_lat: South boundary, decimal degrees, WGS84 (-90 to 90).
-        max_lat: North boundary, decimal degrees, WGS84 (-90 to 90).
-        min_lon: West boundary, decimal degrees, WGS84 (-180 to 180).
-        max_lon: East boundary, decimal degrees, WGS84 (-180 to 180).
-        variables: SSURGO soil profile variable names. Use the
-            ``ssurgo_soil_profile_available_variables()`` tool to get a list of valid variable
-            names. Defaults to a set of commonly used variables.
-        max_runtime_s: Optional maximum runtime in seconds; if the query is estimated to
-            exceed this, a warning is returned instead of data. If not provided, assumed to be 30 s.
+    ### Args
+    * __min_lat__: South boundary, decimal degrees, WGS84 (-90 to 90).
+    * __max_lat__: North boundary, decimal degrees, WGS84 (-90 to 90).
+    * __min_lon__: West boundary, decimal degrees, WGS84 (-180 to 180).
+    * __max_lon__: East boundary, decimal degrees, WGS84 (-180 to 180).
+    * __variables__: SSURGO soil profile variable names. Use the
+          ``ssurgo_soil_profile_available_variables()`` tool to get a list of valid variable
+          names. Defaults to a set of commonly used variables.
+    * __max_runtime_s__: Optional maximum runtime in seconds; if the query is estimated to
+          exceed this, a warning is returned instead of data. If not provided, assumed to be 30 s.
     """
     return _bbox_query(
         min_lat,
@@ -547,14 +547,14 @@ def ssurgo_area_summary_point_query(
 ) -> dict[str, Any]:
     """Query USDA SSURGO pre-aggregated area summary data for a point location.
 
-    Args:
-        latitude: Decimal degrees, WGS84 (-90 to 90).
-        longitude: Decimal degrees, WGS84 (-180 to 180).
-        variables: SSURGO area summary variable names. Use the
-            ``ssurgo_area_summary_available_variables()`` tool to get a list of valid
-            variable names. Defaults to a commonly used set of variables.
-        max_runtime_s: Optional maximum runtime in seconds; if the query is estimated to
-            exceed this, a warning is returned instead of data. If not provided, assumed to be 30 s.
+    ### Args
+    * __latitude__: Decimal degrees, WGS84 (-90 to 90).
+    * __longitude__: Decimal degrees, WGS84 (-180 to 180).
+    * __variables__: SSURGO area summary variable names. Use the
+         ``ssurgo_area_summary_available_variables()`` tool to get a list of valid
+          variable names. Defaults to a commonly used set of variables.
+    * __max_runtime_s__: Optional maximum runtime in seconds; if the query is estimated to
+          exceed this, a warning is returned instead of data. If not provided, assumed to be 30 s.
     """
     return _point_query(
         latitude,
@@ -578,16 +578,16 @@ def ssurgo_area_summary_bbox_query(
 ) -> dict[str, Any]:
     """Query USDA SSURGO area summary data for all map units in a bounding box.
 
-    Args:
-        min_lat: South boundary, decimal degrees, WGS84 (-90 to 90).
-        max_lat: North boundary, decimal degrees, WGS84 (-90 to 90).
-        min_lon: West boundary, decimal degrees, WGS84 (-180 to 180).
-        max_lon: East boundary, decimal degrees, WGS84 (-180 to 180).
-        variables: SSURGO area summary variable names. Use the
-            ``ssurgo_area_summary_available_variables()`` tool to get a list of valid variable
-            names. Defaults to a set of commonly used variables.
-        max_runtime_s: Optional maximum runtime in seconds; if the query is estimated to
-            exceed this, a warning is returned instead of data. If not provided, assumed to be 30 s.
+    ### Args
+    * __min_lat__: South boundary, decimal degrees, WGS84 (-90 to 90).
+    * __max_lat__: North boundary, decimal degrees, WGS84 (-90 to 90).
+    * __min_lon__: West boundary, decimal degrees, WGS84 (-180 to 180).
+    * __max_lon__: East boundary, decimal degrees, WGS84 (-180 to 180).
+    * __variables__: SSURGO area summary variable names. Use the
+          ``ssurgo_area_summary_available_variables()`` tool to get a list of valid variable
+          names. Defaults to a set of commonly used variables.
+    * __max_runtime_s__: Optional maximum runtime in seconds; if the query is estimated to
+          exceed this, a warning is returned instead of data. If not provided, assumed to be 30 s.
     """
     return _bbox_query(
         min_lat,
@@ -622,14 +622,14 @@ def ssurgo_subsurface_barriers_point_query(
 ) -> dict[str, Any]:
     """Query USDA SSURGO subsurface barrier (restrictive layer) data for a point.
 
-    Args:
-        latitude: Decimal degrees, WGS84 (-90 to 90).
-        longitude: Decimal degrees, WGS84 (-180 to 180).
-        variables: SSURGO subsurface barriers variable names. Use the
-            ``ssurgo_subsurface_barriers_available_variables()`` tool to get a list of valid
-            variable names. Defaults to a set of commonly used variables.
-        max_runtime_s: Optional maximum runtime in seconds; if the query is estimated to
-            exceed this, a warning is returned instead of data. If not provided, assumed to be 30 s.
+    ### Args
+    * __latitude__: Decimal degrees, WGS84 (-90 to 90).
+    * __longitude__: Decimal degrees, WGS84 (-180 to 180).
+    * __variables__: SSURGO subsurface barriers variable names. Use the
+          ``ssurgo_subsurface_barriers_available_variables()`` tool to get a list of valid
+          variable names. Defaults to a set of commonly used variables.
+    * __max_runtime_s__: Optional maximum runtime in seconds; if the query is estimated to
+          exceed this, a warning is returned instead of data. If not provided, assumed to be 30 s.
     """
     return _point_query(
         latitude,
@@ -653,16 +653,16 @@ def ssurgo_subsurface_barriers_bbox_query(
 ) -> dict[str, Any]:
     """Query USDA SSURGO subsurface barrier data for all map units in a bounding box.
 
-    Args:
-        min_lat: South boundary, decimal degrees, WGS84 (-90 to 90).
-        max_lat: North boundary, decimal degrees, WGS84 (-90 to 90).
-        min_lon: West boundary, decimal degrees, WGS84 (-180 to 180).
-        max_lon: East boundary, decimal degrees, WGS84 (-180 to 180).
-        variables: SSURGO subsurface barriers variable names. Use the
-            ``ssurgo_subsurface_barrier_variables()`` tool to get a list of valid variable
-            names. Defaults to a set of commonly used variables.
-        max_runtime_s: Optional maximum runtime in seconds; if the query is estimated to
-            exceed this, a warning is returned instead of data. If not provided, assumed to be 30 s.
+    ### Args
+    * __min_lat__: South boundary, decimal degrees, WGS84 (-90 to 90).
+    * __max_lat__: North boundary, decimal degrees, WGS84 (-90 to 90).
+    * __min_lon__: West boundary, decimal degrees, WGS84 (-180 to 180).
+    * __max_lon__: East boundary, decimal degrees, WGS84 (-180 to 180).
+    * __variables__: SSURGO subsurface barriers variable names. Use the
+          ``ssurgo_subsurface_barrier_variables()`` tool to get a list of valid variable
+          names. Defaults to a set of commonly used variables.
+    * __max_runtime_s__: Optional maximum runtime in seconds; if the query is estimated to
+          exceed this, a warning is returned instead of data. If not provided, assumed to be 30 s.
     """
     return _bbox_query(
         min_lat,
@@ -697,14 +697,14 @@ def ssurgo_seasonal_hydrology_point_query(
 ) -> dict[str, Any]:
     """Query USDA SSURGO seasonal hydrology data for a point location.
 
-    Args:
-        latitude: Decimal degrees, WGS84 (-90 to 90).
-        longitude: Decimal degrees, WGS84 (-180 to 180).
-        variables: SSURGO seasonal hydrology variable names. Use the
-            ``ssurgo_seasonal_hydrology_available_variables()`` tool to get a list of valid
-            variable names. Defaults to a set of commonly used variables.
-        max_runtime_s: Optional maximum runtime in seconds; if the query is estimated to
-            exceed this, a warning is returned instead of data. If not provided, assumed to be 30 s.
+    ### Args
+    * __latitude__: Decimal degrees, WGS84 (-90 to 90).
+    * __longitude__: Decimal degrees, WGS84 (-180 to 180).
+    * __variables__: SSURGO seasonal hydrology variable names. Use the
+          ``ssurgo_seasonal_hydrology_available_variables()`` tool to get a list of valid
+          variable names. Defaults to a set of commonly used variables.
+    * __max_runtime_s__: Optional maximum runtime in seconds; if the query is estimated to
+          exceed this, a warning is returned instead of data. If not provided, assumed to be 30 s.
     """
     return _point_query(
         latitude,
@@ -728,16 +728,16 @@ def ssurgo_seasonal_hydrology_bbox_query(
 ) -> dict[str, Any]:
     """Query USDA SSURGO seasonal hydrology data for all map units in a bounding box.
 
-    Args:
-        min_lat: South boundary, decimal degrees, WGS84 (-90 to 90).
-        max_lat: North boundary, decimal degrees, WGS84 (-90 to 90).
-        min_lon: West boundary, decimal degrees, WGS84 (-180 to 180).
-        max_lon: East boundary, decimal degrees, WGS84 (-180 to 180).
-        variables: SSURGO seasonal hydrology variable names. Use the
-            ``ssurgo_seasonal_hydrology_variable_names()`` tool to get a list of valid variable
-            names. Defaults to a set of commonly used variables.
-        max_runtime_s: Optional maximum runtime in seconds; if the query is estimated to
-            exceed this, a warning is returned instead of data. If not provided, assumed to be 30 s.
+    ### Args
+    * __min_lat__: South boundary, decimal degrees, WGS84 (-90 to 90).
+    * __max_lat__: North boundary, decimal degrees, WGS84 (-90 to 90).
+    * __min_lon__: West boundary, decimal degrees, WGS84 (-180 to 180).
+    * __max_lon__: East boundary, decimal degrees, WGS84 (-180 to 180).
+    * __variables__: SSURGO seasonal hydrology variable names. Use the
+          ``ssurgo_seasonal_hydrology_variable_names()`` tool to get a list of valid variable
+          names. Defaults to a set of commonly used variables.
+    * __max_runtime_s__: Optional maximum runtime in seconds; if the query is estimated to
+          exceed this, a warning is returned instead of data. If not provided, assumed to be 30 s.
     """
     return _bbox_query(
         min_lat,
@@ -809,14 +809,14 @@ def ssurgo_soil_suitability_point_query(
 ) -> dict[str, Any]:
     """Query USDA SSURGO soil suitability (interpretation) data for a point location.
 
-    Args:
-        latitude: Decimal degrees, WGS84 (-90 to 90).
-        longitude: Decimal degrees, WGS84 (-180 to 180).
-        rule_names: SSURGO interpretation rule names. Use the
-            ``ssurgo_soil_suitability_available_rule_names()`` tool to get a list of valid rule
-            names. Defaults to a set of commonly used rule names.
-        max_runtime_s: Optional maximum runtime in seconds; if the query is estimated to
-            exceed this, a warning is returned instead of data. If not provided, assumed to be 30 s.
+    ### Args
+    * __latitude__: Decimal degrees, WGS84 (-90 to 90).
+    * __longitude__: Decimal degrees, WGS84 (-180 to 180).
+    * __rule_names__: SSURGO interpretation rule names. Use the
+          ``ssurgo_soil_suitability_available_rule_names()`` tool to get a list of valid rule
+          names. Defaults to a set of commonly used rule names.
+    * __max_runtime_s__: Optional maximum runtime in seconds; if the query is estimated to
+          exceed this, a warning is returned instead of data. If not provided, assumed to be 30 s.
     """
     if warn := check_runtime("ssurgo", 0, 0.0, max_runtime_s):
         return _validate_grouped_geometry_response(warn)
@@ -933,16 +933,16 @@ def ssurgo_soil_suitability_bbox_query(
 ) -> dict[str, Any]:
     """Query USDA SSURGO soil suitability data for all map units in a bounding box.
 
-    Args:
-        min_lat: South boundary, decimal degrees, WGS84 (-90 to 90).
-        max_lat: North boundary, decimal degrees, WGS84 (-90 to 90).
-        min_lon: West boundary, decimal degrees, WGS84 (-180 to 180).
-        max_lon: East boundary, decimal degrees, WGS84 (-180 to 180).
-        rule_names: SSURGO interpretation rule names. Use the
-            ``ssurgo_soil_suitability_available_rule_names()`` tool to get a list of valid rule
-            names. Defaults to a set of commonly used rule names.
-        max_runtime_s: Optional maximum runtime in seconds; if the query is estimated to
-            exceed this, a warning is returned instead of data. If not provided, assumed to be 30 s.
+    ### Args
+    * __min_lat__: South boundary, decimal degrees, WGS84 (-90 to 90).
+    * __max_lat__: North boundary, decimal degrees, WGS84 (-90 to 90).
+    * __min_lon__: West boundary, decimal degrees, WGS84 (-180 to 180).
+    * __max_lon__: East boundary, decimal degrees, WGS84 (-180 to 180).
+    * __rule_names__: SSURGO interpretation rule names. Use the
+          ``ssurgo_soil_suitability_available_rule_names()`` tool to get a list of valid rule
+          names. Defaults to a set of commonly used rule names.
+    * __max_runtime_s__: Optional maximum runtime in seconds; if the query is estimated to
+          exceed this, a warning is returned instead of data. If not provided, assumed to be 30 s.
     """
     try:
         bbox = BboxInput(min_lat=min_lat, max_lat=max_lat, min_lon=min_lon, max_lon=max_lon)
@@ -1072,14 +1072,14 @@ def ssurgo_ecological_site_point_query(
 ) -> dict[str, Any]:
     """Query USDA SSURGO ecological site classification data for a point location.
 
-    Args:
-        latitude: Decimal degrees, WGS84 (-90 to 90).
-        longitude: Decimal degrees, WGS84 (-180 to 180).
-        variables: SSURGO ecological site classification variable names. Use the
-            ``ssurgo_ecological_site_available_variables()`` tool to get a list of valid variable
-            names. Defaults to a set of commonly used variables.
-        max_runtime_s: Optional maximum runtime in seconds; if the query is estimated to
-            exceed this, a warning is returned instead of data. If not provided, assumed to be 30 s.
+    ### Args
+    * __latitude__: Decimal degrees, WGS84 (-90 to 90).
+    * __longitude__: Decimal degrees, WGS84 (-180 to 180).
+    * __variables__: SSURGO ecological site classification variable names. Use the
+          ``ssurgo_ecological_site_available_variables()`` tool to get a list of valid variable
+          names. Defaults to a set of commonly used variables.
+    * __max_runtime_s__: Optional maximum runtime in seconds; if the query is estimated to
+          exceed this, a warning is returned instead of data. If not provided, assumed to be 30 s.
     """
     return _point_query(
         latitude,
@@ -1103,16 +1103,16 @@ def ssurgo_ecological_site_bbox_query(
 ) -> dict[str, Any]:
     """Query USDA SSURGO ecological site data for all map units in a bounding box.
 
-    Args:
-        min_lat: South boundary, decimal degrees, WGS84 (-90 to 90).
-        max_lat: North boundary, decimal degrees, WGS84 (-90 to 90).
-        min_lon: West boundary, decimal degrees, WGS84 (-180 to 180).
-        max_lon: East boundary, decimal degrees, WGS84 (-180 to 180).
-        variables: SSURGO ecological site classification variable names. Use the
-            ``ssurgo_ecological_site_available_variable_names()`` tool to get a list of valid
-            variable names. Defaults to a set of commonly used variable names.
-        max_runtime_s: Optional maximum runtime in seconds; if the query is estimated to
-            exceed this, a warning is returned instead of data. If not provided, assumed to be 30 s.
+    ### Args
+    * __min_lat__: South boundary, decimal degrees, WGS84 (-90 to 90).
+    * __max_lat__: North boundary, decimal degrees, WGS84 (-90 to 90).
+    * __min_lon__: West boundary, decimal degrees, WGS84 (-180 to 180).
+    * __max_lon__: East boundary, decimal degrees, WGS84 (-180 to 180).
+    * __variables__: SSURGO ecological site classification variable names. Use the
+          ``ssurgo_ecological_site_available_variable_names()`` tool to get a list of valid
+          variable names. Defaults to a set of commonly used variable names.
+    * __max_runtime_s__: Optional maximum runtime in seconds; if the query is estimated to
+          exceed this, a warning is returned instead of data. If not provided, assumed to be 30 s.
     """
     return _bbox_query(
         min_lat,
@@ -1147,14 +1147,14 @@ def ssurgo_parent_material_point_query(
 ) -> dict[str, Any]:
     """Query USDA SSURGO parent material data for a point location.
 
-    Args:
-        latitude: Decimal degrees, WGS84 (-90 to 90).
-        longitude: Decimal degrees, WGS84 (-180 to 180).
-        variables: SSURGO parent material variable names. Use the
-            ``ssurgo_parent_material_available_variables()`` tool to get a list of valid
-            variable names. Defaults to a set of commonly used variables.
-        max_runtime_s: Optional maximum runtime in seconds; if the query is estimated to
-            exceed this, a warning is returned instead of data. If not provided, assumed to be 30 s.
+    ### Args
+    * __latitude__: Decimal degrees, WGS84 (-90 to 90).
+    * __longitude__: Decimal degrees, WGS84 (-180 to 180).
+    * __variables__: SSURGO parent material variable names. Use the
+          ``ssurgo_parent_material_available_variables()`` tool to get a list of valid
+          variable names. Defaults to a set of commonly used variables.
+    * __max_runtime_s__: Optional maximum runtime in seconds; if the query is estimated to
+          exceed this, a warning is returned instead of data. If not provided, assumed to be 30 s.
     """
     return _point_query(
         latitude,
@@ -1178,16 +1178,16 @@ def ssurgo_parent_material_bbox_query(
 ) -> dict[str, Any]:
     """Query USDA SSURGO parent material data for all map units in a bounding box.
 
-    Args:
-        min_lat: South boundary, decimal degrees, WGS84 (-90 to 90).
-        max_lat: North boundary, decimal degrees, WGS84 (-90 to 90).
-        min_lon: West boundary, decimal degrees, WGS84 (-180 to 180).
-        max_lon: East boundary, decimal degrees, WGS84 (-180 to 180).
-        variables: SSURGO parent material variable names. Use the
-            ``ssurgo_parent_material_available_variables()`` tool to get a list of valid
-            variable names. Defaults to a set of commonly used variables.
-        max_runtime_s: Optional maximum runtime in seconds; if the query is estimated to
-            exceed this, a warning is returned instead of data. If not provided, assumed to be 30 s.
+    ### Args
+    * __min_lat__: South boundary, decimal degrees, WGS84 (-90 to 90).
+    * __max_lat__: North boundary, decimal degrees, WGS84 (-90 to 90).
+    * __min_lon__: West boundary, decimal degrees, WGS84 (-180 to 180).
+    * __max_lon__: East boundary, decimal degrees, WGS84 (-180 to 180).
+    * __variables__: SSURGO parent material variable names. Use the
+          ``ssurgo_parent_material_available_variables()`` tool to get a list of valid
+          variable names. Defaults to a set of commonly used variables.
+    * __max_runtime_s__: Optional maximum runtime in seconds; if the query is estimated to
+          exceed this, a warning is returned instead of data. If not provided, assumed to be 30 s.
     """
     return _bbox_query(
         min_lat,
@@ -1222,14 +1222,14 @@ def ssurgo_soil_temperature_point_query(
 ) -> dict[str, Any]:
     """Query USDA SSURGO soil temperature data for a point location.
 
-    Args:
-        latitude: Decimal degrees, WGS84 (-90 to 90).
-        longitude: Decimal degrees, WGS84 (-180 to 180).
-        variables: SSURGO soil temperature variable names. Use the
-            ``ssurgo_soil_temperature_available_variables()`` tool to get a list of valid
-            variable names. Defaults to a set of commonly used variables.
-        max_runtime_s: Optional maximum runtime in seconds; if the query is estimated to
-            exceed this, a warning is returned instead of data. If not provided, assumed to be 30 s.
+    ### Args
+    * __latitude__: Decimal degrees, WGS84 (-90 to 90).
+    * __longitude__: Decimal degrees, WGS84 (-180 to 180).
+    * __variables__: SSURGO soil temperature variable names. Use the
+          ``ssurgo_soil_temperature_available_variables()`` tool to get a list of valid
+          variable names. Defaults to a set of commonly used variables.
+    * __max_runtime_s__: Optional maximum runtime in seconds; if the query is estimated to
+          exceed this, a warning is returned instead of data. If not provided, assumed to be 30 s.
     """
     return _point_query(
         latitude,
@@ -1253,16 +1253,16 @@ def ssurgo_soil_temperature_bbox_query(
 ) -> dict[str, Any]:
     """Query USDA SSURGO soil temperature data for all map units in a bounding box.
 
-    Args:
-        min_lat: South boundary, decimal degrees, WGS84 (-90 to 90).
-        max_lat: North boundary, decimal degrees, WGS84 (-90 to 90).
-        min_lon: West boundary, decimal degrees, WGS84 (-180 to 180).
-        max_lon: East boundary, decimal degrees, WGS84 (-180 to 180).
-        variables: SSURGO soil temperature variable names. Use the
-            ``ssurgo_soil_temperature_available_variables()`` tool to get a list of valid
-            variable names. Defaults to a set of commonly used variables.
-        max_runtime_s: Optional maximum runtime in seconds; if the query is estimated to
-            exceed this, a warning is returned instead of data. If not provided, assumed to be 30 s.
+    ### Args
+    * __min_lat__: South boundary, decimal degrees, WGS84 (-90 to 90).
+    * __max_lat__: North boundary, decimal degrees, WGS84 (-90 to 90).
+    * __min_lon__: West boundary, decimal degrees, WGS84 (-180 to 180).
+    * __max_lon__: East boundary, decimal degrees, WGS84 (-180 to 180).
+    * __variables__: SSURGO soil temperature variable names. Use the
+          ``ssurgo_soil_temperature_available_variables()`` tool to get a list of valid
+          variable names. Defaults to a set of commonly used variables.
+    * __max_runtime_s__: Optional maximum runtime in seconds; if the query is estimated to
+          exceed this, a warning is returned instead of data. If not provided, assumed to be 30 s.
     """
     return _bbox_query(
         min_lat,

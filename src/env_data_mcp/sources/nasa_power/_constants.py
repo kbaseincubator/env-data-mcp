@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from enum import Enum
+from enum import StrEnum
 from types import MappingProxyType
 
 DEFAULT_MERRA2_VARIABLES: frozenset[str] = frozenset(
@@ -29,12 +29,12 @@ DEFAULT_SYN1DEG_VARIABLES: frozenset[str] = frozenset(
 )
 
 
-class DatasetType(Enum):
+class DatasetType(StrEnum):
     MERRA2 = "merra2"
     SYN1DEG = "syn1deg"
 
 
-class TemporalResolution(Enum):
+class TemporalResolution(StrEnum):
     HOURLY = "hourly"
     DAILY = "daily"
     MONTHLY = "monthly"
