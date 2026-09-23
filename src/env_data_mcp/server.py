@@ -6,7 +6,14 @@ Source modules are imported below.
 """
 
 import argparse
-from mcp.server.fastmcp import FastMCP
+
+try:  # mcp 1.x
+    from mcp.server.fastmcp import FastMCP  # pyright: ignore[reportMissingImports]
+except ImportError:
+    # mcp 2.x renamed FastMCP -> MCPServer (same tool() decorator and run()); see
+    # https://py.sdk.modelcontextprotocol.io/v2/migration/#fastmcp-renamed-to-mcpserver
+    # A consumer whose resolver picks mcp 2.x (pipx, a fresh venv) must still import the tools.
+    from mcp.server.mcpserver import MCPServer as FastMCP  # pyright: ignore[reportMissingImports]
 
 mcp = FastMCP(
     "env-data-mcp",
@@ -31,6 +38,21 @@ from env_data_mcp.sources import openaq
 from env_data_mcp.sources import oco2
 from env_data_mcp.sources import emit
 from env_data_mcp.sources import essdive
+
+# feeds (live events) + point accessors
+from env_data_mcp.sources import eonet
+from env_data_mcp.sources import usgs_quakes
+from env_data_mcp.sources import nasa_firms
+from env_data_mcp.sources import nws_alerts
+from env_data_mcp.sources import usgs_water
+from env_data_mcp.sources import open_meteo
+from env_data_mcp.sources import daymet
+from env_data_mcp.sources import macrostrat
+from env_data_mcp.sources import elevation_3dep
+from env_data_mcp.sources import arm
+from env_data_mcp.sources import arm_live
+from env_data_mcp.sources import eia
+from env_data_mcp.sources import era5_cds
 
 # GUI dashboard
 from env_data_mcp.dashboard import launch_gui
