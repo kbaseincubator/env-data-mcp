@@ -941,7 +941,6 @@ def test_essdive_timing(sc, _essdive_token):
         latitude=_LAT,
         longitude=_LON,
         radius_km=50.0,
-        limit=10,
     )
     _assert_or_skip(result, "essdive")
     _record("essdive", sc["name"], sc["n_days"], result)
@@ -955,7 +954,6 @@ def test_essdive_timing(sc, _essdive_token):
 def test_essdive_bbox_timing(sc, bz, _essdive_token):
     result = essdive_bbox_query(
         **_make_bbox(_LAT, _LON, bz["half"]),
-        limit=10,
     )
     _assert_or_skip(result, "essdive/bbox")
     _record(
@@ -976,7 +974,6 @@ def test_essdive_extra_location_timing(loc, _essdive_token):
         latitude=loc["lat"],
         longitude=loc["lon"],
         radius_km=50.0,
-        limit=10,
     )
     _assert_or_skip(result, f"essdive/{loc['name']}")
     _record("essdive", "1month", 31, result, location=loc["name"])
@@ -993,13 +990,11 @@ def test_essdive_point_bbox_consistent(_essdive_token):
         radius_km=50.0,
         start_date="2019-08-01",
         end_date="2019-08-31",
-        limit=10,
     )
     bx = essdive_bbox_query(
         **_BBOX,
         start_date="2019-08-01",
         end_date="2019-08-31",
-        limit=10,
     )
     _assert_or_skip(pt, "essdive/point")
     _assert_or_skip(bx, "essdive/bbox")

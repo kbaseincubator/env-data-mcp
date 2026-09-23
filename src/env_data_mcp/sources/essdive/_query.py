@@ -100,11 +100,10 @@ def query_bbox(
     if keywords:
         params["keywords"] = keywords
     packages = _query_for_packages(
-        client, params, api_key, BBox(
-            min_lat=min_lat,
-            min_lon=min_lon, 
-            max_lat=max_lat,
-            max_lon=max_lon)
+        client,
+        params,
+        api_key,
+        BBox(min_lat=min_lat, min_lon=min_lon, max_lat=max_lat, max_lon=max_lon),
     )
     return _generate_response(packages)
 

@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import re
 import sqlite3
 
 import pytest
@@ -38,11 +39,7 @@ _PACKAGES_RESPONSE = {
                     "Data collection was performed using a PP Systems UniSpec-DC spectroradiometer",
                     "This dataset contains 4 data files in comma-separate values (*.csv) format",
                 ],
-                "alternateName": [
-                    "10.25581/spruce.070/1546787",
-                    "spruce.070",
-                    "OSTI ID: 1546787"
-                ],
+                "alternateName": ["10.25581/spruce.070/1546787", "spruce.070", "OSTI ID: 1546787"],
                 "creator": [
                     {
                         "@type": "Person",
@@ -50,13 +47,13 @@ _PACKAGES_RESPONSE = {
                         "givenName": "Mara Y.",
                         "familyName": "McPartland",
                         "affiliation": "University of Minnesota, Saint Paul, MN (United States)",
-                        "email": "mara.mcpartland@uni-leipzig.de"
+                        "email": "mara.mcpartland@uni-leipzig.de",
                     },
                     {
                         "@type": "Person",
                         "givenName": "Michael J.",
                         "familyName": "Falkowski",
-                        "affiliation": "Colorado State University, Fort Collins, CO (United States)"
+                        "affiliation": "Colorado State University, Fort Collins, CO",
                     },
                 ],
                 "datePublished": "2019-07-27",
@@ -71,49 +68,43 @@ _PACKAGES_RESPONSE = {
                     "boreal",
                     "hyperspectral",
                     "ESS-DIVE File Level Metadata Reporting Format",
-                    "ESS-DIVE CSV File Formatting Guidelines Reporting Format"
+                    "ESS-DIVE CSV File Formatting Guidelines Reporting Format",
                 ],
-                "variableMeasured": [
-                  "reflectance"
-                ],
+                "variableMeasured": ["reflectance"],
                 "license": "http://creativecommons.org/licenses/by/4.0/",
                 "spatialCoverage": [
-                {
-                    "@type": "Place",
-                    "description": "SPRUCE Experiment Site",
-                    "geo": [
                     {
-                        "@type": "GeoCoordinates",
-                        "name": "Northwest",
-                        "latitude": 47.50656,
-                        "longitude": -93.45399
-                    },
-                    {
-                        "@type": "GeoCoordinates",
-                        "name": "Southeast",
-                        "latitude": 47.5047,
-                        "longitude": -93.45256
+                        "@type": "Place",
+                        "description": "SPRUCE Experiment Site",
+                        "geo": [
+                            {
+                                "@type": "GeoCoordinates",
+                                "name": "Northwest",
+                                "latitude": 47.50656,
+                                "longitude": -93.45399,
+                            },
+                            {
+                                "@type": "GeoCoordinates",
+                                "name": "Southeast",
+                                "latitude": 47.5047,
+                                "longitude": -93.45256,
+                            },
+                        ],
                     }
-                    ]
-                }
                 ],
-                "award": [
-                    "DEAC0500OR22725"
-                ],
+                "award": ["DEAC0500OR22725"],
                 "funder": [
                     {
                         "@type": "Organization",
                         "@id": "http://dx.doi.org/10.13039/100006206",
-                        "name": "U.S. DOE>Office of Science>Biological and Environmental Research"
+                        "name": "U.S. DOE>Office of Science>Biological and Environmental Research",
                     },
-                    {
-                        "name": "another funder"
-                    }
+                    {"name": "another funder"},
                 ],
                 "temporalCoverage": {
                     "startDate": "2016-09-22",
                     "endDate": "2016-09-22",
-                    "@type": "DateTime"
+                    "@type": "DateTime",
                 },
                 "editor": {
                     "@type": "Person",
@@ -121,7 +112,7 @@ _PACKAGES_RESPONSE = {
                     "givenName": "Mara Y.",
                     "familyName": "McPartland",
                     "affiliation": "University of Minnesota, Saint Paul, MN (United States)",
-                    "email": "mara.mcpartland@uni-leipzig.de"
+                    "email": "mara.mcpartland@uni-leipzig.de",
                 },
                 "citation": [
                     "McPartland, Mara Y., Falkowski, Michael J., Reinhardt, Jason R., Kane,",
@@ -131,21 +122,21 @@ _PACKAGES_RESPONSE = {
                     "Wang, R.; Gamon, J.A.; Emmerton, C.A.; Li, H.; Nestola, E.; Pastorello, G.Z",
                 ],
                 "provider": {
-                "@type": "Organization",
-                "identifier": {
-                    "@type": "PropertyValue",
-                    "propertyID": "ess-dive",
-                    "value": "1e6d50d3-9532-43fb-a63f-bdcb4350bf0c"
-                },
-                "name": "ORNL Terrestrial Ecosystem Science SFA",
-                "member": {
-                    "@type": "Person",
-                    "givenName": "Melanie",
-                    "familyName": "Mayes",
-                    "jobTitle": "Principal Investigator",
-                    "affiliation": "Oak Ridge National Laboratory",
-                    "email": "mayesma@ornl.gov"
-                }
+                    "@type": "Organization",
+                    "identifier": {
+                        "@type": "PropertyValue",
+                        "propertyID": "ess-dive",
+                        "value": "1e6d50d3-9532-43fb-a63f-bdcb4350bf0c",
+                    },
+                    "name": "ORNL Terrestrial Ecosystem Science SFA",
+                    "member": {
+                        "@type": "Person",
+                        "givenName": "Melanie",
+                        "familyName": "Mayes",
+                        "jobTitle": "Principal Investigator",
+                        "affiliation": "Oak Ridge National Laboratory",
+                        "email": "mayesma@ornl.gov",
+                    },
                 },
                 "measurementTechnique": [
                     "Site Description\nThese data were collected at the Spruce and Peatland",
@@ -157,23 +148,23 @@ _PACKAGES_RESPONSE = {
                         "encodingFormat": "application/octet-stream",
                         "identifier": "ess-dive-d7f15d062eda7fd-20260805T151737331",
                         "name": "unispec_dataframe.csv",
-                        "contentSize": 1402.1103515625
+                        "contentSize": 1402.1103515625,
                     },
                     {
                         "contentUrl": "https://data.ess-dive.lbl.gov/catalog/d1/mn/v2/object/ess-dive-89993e6d09b78f2-20260805T151737340",
                         "encodingFormat": "text/csv",
                         "identifier": "ess-dive-89993e6d09b78f2-20260805T151737340",
                         "name": "whitereference_dataframe_parsed_dd.csv",
-                        "contentSize": 0.5400390625
-                    }
-                ]
-            }
+                        "contentSize": 0.5400390625,
+                    },
+                ],
+            },
         },
         {
             "id": "foo",
             "dataset": {},
             "spatialCoverage": [
-               {
+                {
                     "@type": "Place",
                     "description": "SPRUCE Experiment Site",
                     "geo": [
@@ -181,15 +172,15 @@ _PACKAGES_RESPONSE = {
                             "@type": "GeoCoordinates",
                             "name": "Northwest",
                             "latitude": 47.50656,
-                            "longitude": -93.45399
+                            "longitude": -93.45399,
                         },
                         {
                             "@type": "GeoCoordinates",
                             "name": "Southeast",
                             "latitude": 47.5047,
-                            "longitude": -93.45256
-                        }
-                    ]
+                            "longitude": -93.45256,
+                        },
+                    ],
                 },
                 {
                     "@type": "Place",
@@ -199,22 +190,22 @@ _PACKAGES_RESPONSE = {
                             "@type": "GeoCoordinates",
                             "name": "Northwest",
                             "latitude": 48.3,
-                            "longitude": -92.4
+                            "longitude": -92.4,
                         },
                         {
                             "@type": "GeoCoordinates",
                             "name": "Southeast",
                             "latitude": 48.1,
-                            "longitude": -92.3
-                        }
-                    ]
-                }
+                            "longitude": -92.3,
+                        },
+                    ],
+                },
             ],
         },
         {
             "dataset": {},
-        }
-    ]
+        },
+    ],
 }
 
 
@@ -228,7 +219,7 @@ def _result_client_cache(monkeypatch):
                 connection=sqlite3.connect(":memory:", check_same_thread=False)
             ),
             timeout=30.0,
-        )
+        ),
     )
 
 
@@ -245,8 +236,7 @@ def _unset_api_key(monkeypatch):
 @pytest.fixture
 def _packages_mock(httpx_mock):
     httpx_mock.add_response(
-        url=f"{ESSDIVE_BASE_URL}packages",
+        url=re.compile(rf"^{re.escape(ESSDIVE_BASE_URL)}packages(\?.*)?$"),
         json=_PACKAGES_RESPONSE,
         is_reusable=True,
     )
-
