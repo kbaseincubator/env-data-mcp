@@ -58,7 +58,7 @@
       "equation": "t \u2248 3.48 + 0.195\u00b7n_days + 0.0086\u00b7area_deg2"
     },
     "openaq": {
-      "alpha": -14.862,
+      "alpha": 0.0,
       "beta_n_days": 1.0693,
       "beta_area_deg2": 8.5028,
       "r2": 0.6798,

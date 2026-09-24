@@ -230,7 +230,7 @@ def _set_api_key(monkeypatch):
 
 @pytest.fixture
 def _unset_api_key(monkeypatch):
-    monkeypatch.delenv("ESSDIVE_TOKEN")
+    monkeypatch.delenv("ESSDIVE_TOKEN", raising=False)
 
 
 @pytest.fixture
