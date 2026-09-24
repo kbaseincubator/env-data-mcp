@@ -927,7 +927,7 @@ def test_openaq_point_bbox_consistent(_openaq_key):
 
 
 # ===========================================================================
-# ESS-DIVE — requires ESSDIVE_TOKEN
+# ESS-DIVE — optionally accepts ESSDIVE_TOKEN
 # ===========================================================================
 
 
