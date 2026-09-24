@@ -116,9 +116,7 @@ def essdive_point_query(
                     source="ess-dive",
                     query_params=query_params,
                     geometries_returned=len(data),
-                    total_records_returned=sum(
-                        len(r["files"]) for group in data for r in group["records"]
-                    ),
+                    total_records_returned=sum(len(group["records"]) for group in data),
                     latency_s=latency,
                     license_info=LICENSE_INFO,
                 ),
@@ -225,9 +223,7 @@ def essdive_bbox_query(
                     source="ess-dive",
                     query_params=query_params,
                     geometries_returned=len(data),
-                    total_records_returned=sum(
-                        len(r["files"]) for group in data for r in group["records"]
-                    ),
+                    total_records_returned=sum(len(group["records"]) for group in data),
                     latency_s=latency,
                     license_info=LICENSE_INFO,
                 ),

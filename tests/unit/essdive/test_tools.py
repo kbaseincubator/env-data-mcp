@@ -56,8 +56,8 @@ def test_essdive_point_query():
     # spatialCoverage); 1 default point (dataset with no spatial coverage).
     assert len(result["data"]) == 4
     assert result["_meta"]["geometries_returned"] == 4
-    # The first package has 2 files, the rest have none.
-    assert result["_meta"]["total_records_returned"] == 2
+    # One record per geometry
+    assert result["_meta"]["total_records_returned"] == 4
 
     bbox_group = result["data"][0]
     assert bbox_group["geometry"]["type"] == "Polygon"
@@ -137,8 +137,8 @@ def test_essdive_bbox_query():
     # spatialCoverage); 1 default bbox (dataset with no spatial coverage).
     assert len(result["data"]) == 4
     assert result["_meta"]["geometries_returned"] == 4
-    # The first package has 2 files, the rest have none.
-    assert result["_meta"]["total_records_returned"] == 2
+    # One record per geometry
+    assert result["_meta"]["total_records_returned"] == 4
 
     bbox_group = result["data"][0]
     assert bbox_group["geometry"]["type"] == "Polygon"

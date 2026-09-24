@@ -198,6 +198,10 @@ def _query_for_packages(
     client: SyncCacheClient, params: dict[str, Any], api_key: str | None, default_geo: BBox | Point
 ) -> list[Package]:
     resp = client.get(f"{ESSDIVE_BASE_URL}packages", params=params, headers=_build_headers(api_key))
+    # ESS-DIVE returns a 404 error when no records are found, even though the search ran
+    # properly
+    if resp.status_code == HTTPStatus.NOT_FOUND:
+        return []
     resp.raise_for_status()
     packages: list[Package] = []
     packages.extend(_extract_packages(resp.json()["result"], default_geo))
@@ -206,6 +210,10 @@ def _query_for_packages(
         resp = client.get(
             f"{ESSDIVE_BASE_URL}packages", params=params, headers=_build_headers(api_key)
         )
+        # ESS-DIVE returns a 404 error when no records are found, even though the search ran
+        # properly
+        if resp.status_code == HTTPStatus.NOT_FOUND:
+            return []
         resp.raise_for_status()
         packages.extend(_extract_packages(resp.json()["result"], default_geo))
     return packages
