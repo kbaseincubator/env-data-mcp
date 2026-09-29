@@ -454,4 +454,3 @@ def test_query_bbox():
         token=_TOKEN,
     )
     assert len(records) == 3
-

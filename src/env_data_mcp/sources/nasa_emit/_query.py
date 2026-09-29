@@ -49,12 +49,16 @@ def query_point(
     for g in granules:
         if not g.nc4_link:
             raise ValueError(f"Missing NetCDF URL for granule {g.id}")
-        batch = _query_granule_point(
-            granule=g,
-            latitude=latitude,
-            longitude=longitude,
-            token=token,
-        )
+        try:
+            batch = _query_granule_point(
+                granule=g,
+                latitude=latitude,
+                longitude=longitude,
+                token=token,
+            )
+        except httpx.HTTPStatusError:
+            # Some CMR-indexed granules aren't resolvable via OPeNDAP (reprocessed/removed).
+            continue
         records.extend(batch)
     return records
 
@@ -82,14 +86,18 @@ def query_bbox(
     for g in granules:
         if not g.nc4_link:
             raise ValueError(f"Missing NetCDF URL for granule {g.id}")
-        batch = _query_granule_bbox(
-            granule=g,
-            min_lat=min_lat,
-            max_lat=max_lat,
-            min_lon=min_lon,
-            max_lon=max_lon,
-            token=token,
-        )
+        try:
+            batch = _query_granule_bbox(
+                granule=g,
+                min_lat=min_lat,
+                max_lat=max_lat,
+                min_lon=min_lon,
+                max_lon=max_lon,
+                token=token,
+            )
+        except httpx.HTTPStatusError:
+            # Some CMR-indexed granules aren't resolvable via OPeNDAP (reprocessed/removed).
+            continue
         records.extend(batch)
     return records
 

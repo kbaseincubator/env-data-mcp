@@ -150,4 +150,3 @@ def _bbox_query_mock(httpx_mock, _cmr_mock):
             _BBOX_GROUP_1_ID, _BBOX_GROUP_1_BD, _BBOX_GROUP_2_ID, _BBOX_GROUP_2_BD
         ),
     )
-

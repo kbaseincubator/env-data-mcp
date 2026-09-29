@@ -15,12 +15,14 @@ has no data before its launch date.
 from __future__ import annotations
 
 import os
+from dataclasses import replace
 from http import HTTPStatus
 from typing import Any
 
 import httpx
 import pytest
 
+from env_data_mcp.models import BboxInput
 from env_data_mcp.sources.nasa_emit._constants import (
     CMR_GANULES_URL,
     COLLECTION_SHORT_NAME,
@@ -32,12 +34,54 @@ from env_data_mcp.sources.nasa_emit.tools import (
 )
 
 from .common import (
+    STANDARD_BBOXES,
+    STANDARD_LOCATIONS,
     AdapterSpec,
+    BboxCase,
     DataExpectation,
     assert_grouped_geometry_response_valid,
 )
 
 pytestmark = pytest.mark.integration
+
+# ---------------------------------------------------------------------------
+# Adapter-specific test window. The shared STANDARD_LOCATIONS/STANDARD_BBOXES
+# dates predate EMIT's 2022-08-09 launch, and this adapter returns one
+# geometry group per ~60 m pixel, so the shared 4-degree/1-degree bbox sizes
+# would each enumerate hundreds of thousands of pixels.
+# ---------------------------------------------------------------------------
+
+_EMIT_WINDOW_START = "2023-04-10"
+_EMIT_WINDOW_END = "2023-04-20"
+_TINY_BBOX_HALF_WIDTH = 0.002
+
+_NASA_EMIT_LOCATIONS = {
+    loc.label: replace(loc, start_date=_EMIT_WINDOW_START, end_date=_EMIT_WINDOW_END)
+    for loc in STANDARD_LOCATIONS
+}
+_STANDARD_LOCATIONS_BY_LABEL = {loc.label: loc for loc in STANDARD_LOCATIONS}
+_BBOX_TO_LOCATION_LABEL = {"nh_midlat": "nh_rural", "sh_midlat": "sh_rural", "equatorial": "ocean"}
+
+
+def _tiny_bbox(bbox: BboxCase) -> BboxCase:
+    """A tiny box centered on the verified point for *bbox*'s region."""
+    center = _STANDARD_LOCATIONS_BY_LABEL[_BBOX_TO_LOCATION_LABEL[bbox.label]].coordinates
+    return replace(
+        bbox,
+        coordinates=BboxInput(
+            min_lat=center.latitude - _TINY_BBOX_HALF_WIDTH,
+            max_lat=center.latitude + _TINY_BBOX_HALF_WIDTH,
+            min_lon=center.longitude - _TINY_BBOX_HALF_WIDTH,
+            max_lon=center.longitude + _TINY_BBOX_HALF_WIDTH,
+        ),
+        split_lon=center.longitude,
+        start_date=_EMIT_WINDOW_START,
+        end_date=_EMIT_WINDOW_END,
+    )
+
+
+_NASA_EMIT_BBOXES = {bbox.label: _tiny_bbox(bbox) for bbox in STANDARD_BBOXES}
+
 
 # ---------------------------------------------------------------------------
 # Availability guard
@@ -135,20 +179,20 @@ NASA_EMIT_SPEC = AdapterSpec(
     primary_variable=None,
     default_variables=None,
     max_runtime_s=120.0,
-    # Standard 7-day window predates EMIT's 2022-08-09 launch; extend to 2025.
-    longer_date_range=True,
+    custom_locations=_NASA_EMIT_LOCATIONS,
+    custom_bboxes=_NASA_EMIT_BBOXES,
     data_expectations={
         "nh_urban": DataExpectation(
             has_data=False,
-            notes="Dense urban/vegetated area — no exposed mineral surfaces for EMIT to detect.",
+            notes=f"Verified live: 0 granules found for {_EMIT_WINDOW_START}..{_EMIT_WINDOW_END}.",
         ),
         "sh_rural": DataExpectation(
             has_data=False,
-            notes="Not a verified EMIT target region; no confirmed coverage.",
+            notes=f"Verified live: 0 granules found for {_EMIT_WINDOW_START}..{_EMIT_WINDOW_END}.",
         ),
         "sh_urban": DataExpectation(
             has_data=False,
-            notes="Dense urban/vegetated area — no exposed mineral surfaces for EMIT to detect.",
+            notes=f"Verified live: 0 granules found for {_EMIT_WINDOW_START}..{_EMIT_WINDOW_END}.",
         ),
         "nh_polar": DataExpectation(
             has_data=False,
@@ -160,18 +204,21 @@ NASA_EMIT_SPEC = AdapterSpec(
         ),
         "ocean": DataExpectation(
             has_data=False,
-            notes="EMIT targets arid land dust-source regions, not open ocean.",
+            notes=f"Verified live: 0 granules found for {_EMIT_WINDOW_START}..{_EMIT_WINDOW_END}.",
         ),
         "sh_midlat": DataExpectation(
             has_data=False,
-            notes="Not a verified EMIT target region; no confirmed coverage.",
+            notes=f"Verified live: 0 granules found for {_EMIT_WINDOW_START}..{_EMIT_WINDOW_END}.",
         ),
         "equatorial": DataExpectation(
             has_data=False,
-            notes="EMIT targets arid land dust-source regions, not open ocean.",
+            notes=f"Verified live: 0 granules found for {_EMIT_WINDOW_START}..{_EMIT_WINDOW_END}.",
         ),
     },
     supports_bbox_union_test=False,  # granule swath edges don't split cleanly at split_lon
+    # Nearest-pixel search has no distance bound, so a point query can match a
+    # pixel anywhere in the granule scene, not necessarily near a small test bbox.
+    supports_point_in_bbox_consistency=False,
     validate_point_result=_validate_nasa_emit_point_result,
     validate_bbox_result=_validate_nasa_emit_bbox_result,
 )

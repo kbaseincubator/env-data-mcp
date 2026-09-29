@@ -52,6 +52,7 @@ def test_nasa_emit_point_query():
         longitude=_LON,
         start_date="2023-08-01",
         end_date="2023-08-31",
+        max_runtime_s=500,
     )
     assert len(result["data"]) == 1
     assert result["data"][0]["geometry"]["type"] == "Point"
@@ -79,6 +80,7 @@ def test_nasa_emit_point_query_no_granules(httpx_mock):
         longitude=_LON,
         start_date="2023-08-01",
         end_date="2023-08-31",
+        max_runtime_s=500,
     )
     assert result["data"] == []
     assert result["_meta"]["success"] is True
@@ -113,6 +115,7 @@ def test_nasa_emit_bbox_query():
         max_lon=_LON + 1.0,
         start_date="2023-08-01",
         end_date="2023-08-31",
+        max_runtime_s=500,
     )
     assert len(result["data"]) == 3
     assert result["_meta"]["source"] == "nasa_emit"
@@ -136,6 +139,7 @@ def test_nasa_emit_bbox_query_no_granules(httpx_mock):
         max_lon=_LON + 1.0,
         start_date="2023-08-01",
         end_date="2023-08-31",
+        max_runtime_s=500,
     )
     assert result["data"] == []
     assert result["_meta"]["success"] is True
