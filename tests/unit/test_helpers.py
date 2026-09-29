@@ -360,11 +360,11 @@ class TestEstimateRuntime:
         t = estimate_runtime("nasa_emit", n_days=0, area_deg2=0.0)
         assert t >= 0.0
 
-    def test_oco2_override_applied(self) -> None:
-        # For a 100-day OCO-2 query, the override formula dominates.
-        # override = 2.84 + ceil(100/10) * 3.0 = 2.84 + 30 = 32.84
-        t = estimate_runtime("oco2", n_days=100, area_deg2=0.0)
-        assert t >= 32.84
+    def test_nasa_oco2_scales_with_n_days(self) -> None:
+        # nasa_oco2 has a real fitted model (no override); longer windows -> higher estimate.
+        t_short = estimate_runtime("nasa_oco2", n_days=1, area_deg2=0.0)
+        t_long = estimate_runtime("nasa_oco2", n_days=100, area_deg2=0.0)
+        assert t_long > t_short
 
     def test_openaq_override_applied(self) -> None:
         # 100-day: override = 1.5 + 0.15*100 = 16.5 s
@@ -394,7 +394,7 @@ class TestEstimateRuntime:
             "essdive",
             "gbif",
             "nasa_power",
-            "oco2",
+            "nasa_oco2",
             "openaq",
             "tropomi",
             "soilgrids",

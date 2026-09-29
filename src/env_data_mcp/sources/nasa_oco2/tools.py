@@ -37,7 +37,7 @@ def _get_token(
         return "", {
             "data": [],
             "_meta": build_meta(
-                source="nasa_emit",
+                source="nasa_oco2",
                 query_params=query_params,
                 geometries_returned=0,
                 total_records_returned=0,
@@ -68,7 +68,7 @@ def nasa_oco2_point_query(
     max_runtime_s: float = 30.0,
 ) -> dict[str, Any]:
     """Query NASA OCO2 Gridded Daily CO2 Assimilated Dataset for a point location.
-    
+
     Returns CO2 concentrations grouped by nearest grid cell with a GeoJSON Point
     geometry, from the NASA OCO2 dataset.
     Global coverage, 2015-01-01 to 2022-02-28
@@ -102,10 +102,10 @@ def nasa_oco2_point_query(
         ):
             return _validate_grouped_geometry_response(warn)
         data = query_point(
-            latitude=latitude,
-            longitude=longitude,
-            start_date=start_date,
-            end_date=end_date,
+            latitude=point.latitude,
+            longitude=point.longitude,
+            start_date=date_range.start_date,
+            end_date=date_range.end_date,
             token=token,
         )
         latency = time.perf_counter() - t0
@@ -140,11 +140,11 @@ def nasa_oco2_point_query(
                     license_info=LICENSE_INFO,
                     success=False,
                     error=str(exc),
-                    variables=[key for key in LICENSE_INFO],
-                    variable_info={key: val for key, val in LICENSE_INFO.items()},
+                    variables=[key for key in VARIABLE_INFO],
+                    variable_info={key: val for key, val in VARIABLE_INFO.items()},
                     auth_required=True,
                     auth_present=True,
-                )
+                ),
             }
         )
 
@@ -161,7 +161,7 @@ def nasa_oco2_bbox_query(
     max_runtime_s: float = 30.0,
 ) -> dict[str, Any]:
     """Query NASA OCO2 Gridded Daily CO2 Assimilated Dataset for a point bounding box area.
-    
+
     Returns CO2 concentrations grouped by nearest grid cell with a GeoJSON Point
     geometry, from the NASA OCO2 dataset.
     Global coverage, 2015-01-01 to 2022-02-28
@@ -171,8 +171,8 @@ def nasa_oco2_bbox_query(
     * __max_lat__: North boundary, decimal degrees, WGS84 (-90 to 90).
     * __min_lon__: West boundary, decimal degrees, WGS84 (-180 to 180).
     * __max_lon__: East boundary, decimal degrees, WGS84 (-180 to 180).
-    * __start_date__: Inclusive start date, ISO 8601 date string, e.g., "2023-08-15",
-    * __end_date__: Inclusive end date, ISO 8601 date string, e.g., "2023-08-15".
+    * __start_date__: Inclusive start date, ISO 8601 date string, e.g., "2019-08-15",
+    * __end_date__: Inclusive end date, ISO 8601 date string, e.g., "2019-08-15".
     * __max_runtime_s__: Optional maximum runtime in seconds; if the query is estimated to
           exceed this, a warning is returned instead of data. If not provided, assumed to be 30 s.
     """
@@ -199,7 +199,7 @@ def nasa_oco2_bbox_query(
         date_range = DateRange(start_date=start_date, end_date=end_date)
         n_days = date_range_days(start_date=start_date, end_date=end_date)
         if warn := check_runtime(
-            source="nassa_oco2",
+            source="nasa_oco2",
             n_days=n_days,
             area_deg2=bbox_area_deg2(bbox.model_dump()),
             max_runtime_s=max_runtime_s,
@@ -210,8 +210,8 @@ def nasa_oco2_bbox_query(
             max_lat=bbox.max_lat,
             min_lon=bbox.min_lon,
             max_lon=bbox.max_lon,
-            start_date=start_date,
-            end_date=end_date,
+            start_date=date_range.start_date,
+            end_date=date_range.end_date,
             token=token,
         )
         latency = time.perf_counter() - t0
@@ -250,6 +250,6 @@ def nasa_oco2_bbox_query(
                     variable_info={key: val for key, val in VARIABLE_INFO.items()},
                     auth_required=True,
                     auth_present=True,
-                )
+                ),
             }
         )

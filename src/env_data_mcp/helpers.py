@@ -105,8 +105,8 @@ def estimate_runtime(source: str, n_days: int, area_deg2: float) -> float:
 
     Uses the linear equation ``t ≈ α + β_n·n_days + β_a·area_deg2`` from
     ``timing_model.json``, then takes the maximum with a physics-based override
-    formula for sources where the 2D model is unreliable at scale.  Five sources
-    have overrides: OCO-2, EMIT, Sentinel-5P, OpenAQ, and GBIF.
+    formula for sources where the 2D model is unreliable at scale.  Two sources
+    have overrides: OpenAQ and GBIF.
 
     Args:
         source: Short source identifier, e.g. ``"gbif"``.
@@ -130,11 +130,7 @@ def estimate_runtime(source: str, n_days: int, area_deg2: float) -> float:
     # Physics-based overrides for sources where the fitted 2D model is
     # unreliable (low R², capped benchmark observations, or area effect
     # zeroed by clamping).  Each formula models the dominant cost driver.
-    if source == "oco2":
-        # Temporal-only CMR search; 10 parallel workers, each batch ≈ 3 s.
-        t_override = 2.84 + math.ceil(n_days / 10) * 3.0
-        t_model = max(t_model, t_override)
-    elif source == "openaq":
+    if source == "openaq":
         # Fitted R²=0.07 — model is nearly useless (density varies by location).
         # Assumes a moderately busy urban station: ~1 page of measurements per
         # day at 0.4 s/page → 0.15 s/day.  Extreme dense-city outliers remain
