@@ -12,9 +12,10 @@ import httpx
 import numpy as np
 
 from ._constants import (
-    ABUNDANCE_PATHS,
     CMR_GANULES_URL,
     COLLECTION_SHORT_NAME,
+    FILL_MINERAL_ID,
+    GROUP_VARS,
     LAT_PATHS,
     LON_PATHS,
     MINERAL_NAME_PATHS,
@@ -215,7 +216,14 @@ def _get_dataset(hf: h5py.File, *paths: str) -> h5py.Dataset:
 
 def _decode_mineral_names(ds: h5py.Dataset) -> list[str]:
     raw = ds[:]
-    names: list[str] = []
+    if raw.ndim == 2 and raw.dtype.kind == "S" and raw.dtype.itemsize == 1:
+        # Fixed-width char matrix: one row of individual single-byte cells per name.
+        names: list[str] = []
+        for row in raw:
+            joined = b"".join(row.tolist())
+            names.append(joined.split(b"\x00")[0].decode("utf-8", errors="replace").strip())
+        return names
+    names = []
     for item in raw.flat:
         if isinstance(item, bytes):
             names.append(item.decode("utf-8", errors="replace").strip())
@@ -253,85 +261,48 @@ def _extract_pixels_in_bbox(
     return list(zip(rows.tolist(), cols.tolist(), strict=True))
 
 
-def _mineral_records_for_pixel(
-    *,
-    granule: Granule,
-    i: int,
-    j: int,
+def _group_var_expr(i_lo: int, i_hi: int, j_lo: int, j_hi: int) -> str:
+    """Build a constraint expression requesting group_1/group_2 mineral_id + band_depth.
+
+    The Hyrax HTTP front end rejects literal '[' / ']' in the request line, so the
+    array-slice brackets are percent-encoded.
+    """
+    dims = f"%5B{i_lo}:{i_hi}%5D%5B{j_lo}:{j_hi}%5D"
+    return ",".join(f"{var}{dims}" for var in GROUP_VARS)
+
+
+def _is_valid_detection(mineral_id: int, band_depth: float, n_minerals: int) -> bool:
+    return mineral_id != FILL_MINERAL_ID and band_depth > 0.0 and 0 <= mineral_id < n_minerals
+
+
+def _build_pixel_record(
     mineral_names: list[str],
-    pixel_lat: float,
-    pixel_lon: float,
-    token: str,
-) -> list[dict[str, Any]]:
-    n = len(mineral_names)
-    var_expr = f"/spectral_abundance[{i}:{i}][{j}:{j}][0:{n - 1}]"
-    content = _fetch_nc4_file(granule.nc4_link, var_expr, token)
-
-    with h5py.File(io.BytesIO(content), "r") as hf:
-        abund_ds = _get_dataset(hf, *ABUNDANCE_PATHS)
-        abundance = abund_ds[:].ravel()
-
-    return [
-        {
-            "geometry": {"type": "Point", "coordinates": [pixel_lon, pixel_lat]},
-            "latitude": pixel_lat,
-            "longitude": pixel_lon,
-            "records": [
-                {
-                    "mineral_name": name,
-                    "abundance": float(val),
-                    "units": "fractional (0-1)",
-                    "aquisition_date": granule.date,
-                    "granule_id": granule.id,
-                }
-                for name, val in zip(mineral_names, abundance, strict=False)
-            ],
-        }
-    ]
-
-
-def _mineral_records_for_bbox(
-    *,
+    group_1_id: int,
+    group_1_depth: float,
+    group_2_id: int,
+    group_2_depth: float,
     granule: Granule,
-    pixels: list[tuple[int, int]],
-    mineral_names: list[str],
-    lat_arr: np.ndarray,
-    lon_arr: np.ndarray,
-    token: str,
-) -> list[dict[str, Any]]:
-    n = len(mineral_names)
-    rows = [p[0] for p in pixels]
-    cols = [p[1] for p in pixels]
-    i_lo, i_hi = min(rows), max(rows)
-    j_lo, j_hi = min(cols), max(cols)
-    var_expr = f"/spectral_abundance[{i_lo}:{i_hi}][{j_lo}:{j_hi}][0:{n - 1}]"
-    content = _fetch_nc4_file(granule.nc4_link, var_expr, token)
+) -> dict[str, Any] | None:
+    """Build one datetime record for a pixel; None if neither group has a positive detection.
 
-    with h5py.File(io.BytesIO(content), "r") as hf:
-        abund_ds = _get_dataset(hf, *ABUNDANCE_PATHS)
-        abundance = abund_ds[:]
-
-    return [
-        {
-            "geometry": {
-                "type": "Point",
-                "coordinates": [float(lon_arr[i, j]), float(lat_arr[i, j])],
-            },
-            "latitude": float(lat_arr[i, j]),
-            "longitude": float(lon_arr[i, j]),
-            "records": [
-                {
-                    "mineral_name": name,
-                    "abundance": float(val),
-                    "units": "fractional (0-1)",
-                    "aquisition_date": granule.date,
-                    "granule_id": granule.id,
-                }
-                for name, val in zip(mineral_names, abundance[i - i_lo, j - j_lo, :], strict=False)
-            ],
-        }
-        for i, j in pixels
-    ]
+    ``mineral_id == FILL_MINERAL_ID`` marks off-swath/masked pixels. Within the
+    swath, a non-detection is reported as ``mineral_id == 0`` with
+    ``band_depth == 0.0`` (~82% of pixels in a typical scene) rather than the
+    fill value, so a positive band depth is required to treat a match as real.
+    """
+    record: dict[str, Any] = {"datetime": granule.date, "granule_id": granule.id}
+    has_data = False
+    if _is_valid_detection(group_1_id, group_1_depth, len(mineral_names)):
+        record["group_1_mineral_name"] = mineral_names[group_1_id]
+        record["group_1_band_depth"] = float(group_1_depth)
+        record["group_1_band_depth_units"] = "unitless"
+        has_data = True
+    if _is_valid_detection(group_2_id, group_2_depth, len(mineral_names)):
+        record["group_2_mineral_name"] = mineral_names[group_2_id]
+        record["group_2_band_depth"] = float(group_2_depth)
+        record["group_2_band_depth_units"] = "unitless"
+        has_data = True
+    return record if has_data else None
 
 
 def _query_granule_point(
@@ -355,15 +326,24 @@ def _query_granule_point(
     pixel_lat = float(lat_arr[i, j])
     pixel_lon = float(lon_arr[i, j])
 
-    return _mineral_records_for_pixel(
-        granule=granule,
-        i=i,
-        j=j,
-        mineral_names=mineral_names,
-        pixel_lat=pixel_lat,
-        pixel_lon=pixel_lon,
-        token=token,
-    )
+    group_bytes = _fetch_nc4_file(granule.nc4_link, _group_var_expr(i, i, j, j), token)
+    with h5py.File(io.BytesIO(group_bytes), "r") as hf:
+        g1_id = int(_get_dataset(hf, GROUP_VARS[0])[0, 0])
+        g1_bd = float(_get_dataset(hf, GROUP_VARS[1])[0, 0])
+        g2_id = int(_get_dataset(hf, GROUP_VARS[2])[0, 0])
+        g2_bd = float(_get_dataset(hf, GROUP_VARS[3])[0, 0])
+
+    record = _build_pixel_record(mineral_names, g1_id, g1_bd, g2_id, g2_bd, granule)
+    if record is None:
+        return []
+    return [
+        {
+            "geometry": {"type": "Point", "coordinates": [pixel_lon, pixel_lat]},
+            "latitude": pixel_lat,
+            "longitude": pixel_lon,
+            "records": [record],
+        }
+    ]
 
 
 def _query_granule_bbox(
@@ -396,11 +376,40 @@ def _query_granule_bbox(
     if not pixels:
         return []
 
-    return _mineral_records_for_bbox(
-        granule=granule,
-        pixels=pixels,
-        mineral_names=mineral_names,
-        lat_arr=lat_arr,
-        lon_arr=lon_arr,
-        token=token,
-    )
+    rows = [p[0] for p in pixels]
+    cols = [p[1] for p in pixels]
+    i_lo, i_hi = min(rows), max(rows)
+    j_lo, j_hi = min(cols), max(cols)
+
+    group_bytes = _fetch_nc4_file(granule.nc4_link, _group_var_expr(i_lo, i_hi, j_lo, j_hi), token)
+    with h5py.File(io.BytesIO(group_bytes), "r") as hf:
+        g1_id_arr = _get_dataset(hf, GROUP_VARS[0])[:]
+        g1_bd_arr = _get_dataset(hf, GROUP_VARS[1])[:]
+        g2_id_arr = _get_dataset(hf, GROUP_VARS[2])[:]
+        g2_bd_arr = _get_dataset(hf, GROUP_VARS[3])[:]
+
+    groups: list[dict[str, Any]] = []
+    for i, j in pixels:
+        ri, rj = i - i_lo, j - j_lo
+        record = _build_pixel_record(
+            mineral_names,
+            int(g1_id_arr[ri, rj]),
+            float(g1_bd_arr[ri, rj]),
+            int(g2_id_arr[ri, rj]),
+            float(g2_bd_arr[ri, rj]),
+            granule,
+        )
+        if record is None:
+            continue
+        groups.append(
+            {
+                "geometry": {
+                    "type": "Point",
+                    "coordinates": [float(lon_arr[i, j]), float(lat_arr[i, j])],
+                },
+                "latitude": float(lat_arr[i, j]),
+                "longitude": float(lon_arr[i, j]),
+                "records": [record],
+            }
+        )
+    return groups

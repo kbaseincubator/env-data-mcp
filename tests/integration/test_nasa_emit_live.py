@@ -86,6 +86,20 @@ def _skip_if_auth_rejected(meta: dict[str, Any]) -> None:
 # ---------------------------------------------------------------------------
 
 
+def _assert_valid_mineral_record(rec: dict[str, Any]) -> None:
+    """A record must have at least one real group_N mineral_name/band_depth pair."""
+    assert rec["datetime"] != ""
+    assert rec["granule_id"] != ""
+    has_group = False
+    for prefix in ("group_1", "group_2"):
+        if f"{prefix}_mineral_name" in rec:
+            has_group = True
+            assert rec[f"{prefix}_mineral_name"] != ""
+            assert rec[f"{prefix}_band_depth"] > 0.0
+            assert rec[f"{prefix}_band_depth_units"] == "unitless"
+    assert has_group, f"record has no group_1/group_2 mineral match: {rec}"
+
+
 def _validate_nasa_emit_point_result(result: dict) -> None:
     """NASA EMIT-specific assertions for a point query result."""
     assert_grouped_geometry_response_valid(result)
@@ -95,8 +109,7 @@ def _validate_nasa_emit_point_result(result: dict) -> None:
     for group in result["data"]:
         assert len(group["records"]) >= 1
         for rec in group["records"]:
-            assert rec["mineral_name"]
-            assert 0.0 <= rec["abundance"] <= 1.0
+            _assert_valid_mineral_record(rec)
 
 
 def _validate_nasa_emit_bbox_result(result: dict) -> None:
@@ -230,12 +243,7 @@ def test_nasa_emit_point_query_live_record_schema(point_query_results):
     assert _LON - 1.0 < entry["longitude"] < _LON + 1.0
     assert len(entry["records"]) > 0
     for rec in entry["records"]:
-        assert rec["mineral_name"] != ""
-        assert 0.0 <= rec["abundance"] <= 1.0
-        # "aquisition_date" (sic) matches the current record schema
-        assert rec["aquisition_date"] != ""
-        assert rec["granule_id"] != ""
-        assert rec["units"] != ""
+        _assert_valid_mineral_record(rec)
 
 
 @pytest.mark.integration
@@ -260,11 +268,13 @@ def test_nasa_emit_point_query_live_no_key_returns_auth_error(monkeypatch):
 
 @pytest.fixture(scope="module")
 def bbox_query_results() -> dict[str, Any]:
+    # A tiny box: EMIT is ~60 m/pixel, so even 0.004 degrees spans dozens of
+    # pixels, and this adapter returns one geometry group per pixel.
     return nasa_emit_bbox_query(
-        min_lat=_LAT - 0.25,
-        max_lat=_LAT + 0.25,
-        min_lon=_LON - 0.25,
-        max_lon=_LON + 0.25,
+        min_lat=_LAT - 0.002,
+        max_lat=_LAT + 0.002,
+        min_lon=_LON - 0.002,
+        max_lon=_LON + 0.002,
         start_date=_START,
         end_date=_END,
         max_runtime_s=9999,
@@ -309,18 +319,17 @@ def test_nasa_emit_bbox_query_live_record_schema(bbox_query_results):
     assert _LON - 1.0 < entry["longitude"] < _LON + 1.0
     assert len(entry["records"]) > 0
     for rec in entry["records"]:
-        assert rec["mineral_name"] != ""
-        assert 0.0 <= rec["abundance"] <= 1.0
+        _assert_valid_mineral_record(rec)
 
 
 @pytest.mark.integration
 def test_nasa_emit_bbox_query_live_no_key_returns_auth_error(monkeypatch):
     monkeypatch.delenv("EARTHDATA_TOKEN", raising=False)
     result = nasa_emit_bbox_query(
-        min_lat=_LAT - 0.25,
-        max_lat=_LAT + 0.25,
-        min_lon=_LON - 0.25,
-        max_lon=_LON + 0.25,
+        min_lat=_LAT - 0.002,
+        max_lat=_LAT + 0.002,
+        min_lon=_LON - 0.002,
+        max_lon=_LON + 0.002,
         start_date=_START,
         end_date=_END,
     )

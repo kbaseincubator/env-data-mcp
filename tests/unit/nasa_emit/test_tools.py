@@ -58,11 +58,11 @@ def test_nasa_emit_point_query():
     assert result["data"][0]["geometry"]["coordinates"] == [_LON, _LAT]
     assert result["data"][0]["latitude"] == _LAT
     assert result["data"][0]["longitude"] == _LON
-    assert len(result["data"][0]["records"]) == 2
+    assert len(result["data"][0]["records"]) == 1
     assert result["data"][0]["records"][0]["granule_id"] == _GRANULE_ID
     assert result["_meta"]["source"] == "nasa_emit"
     assert result["_meta"]["geometries_returned"] == 1
-    assert result["_meta"]["total_records_returned"] == 2
+    assert result["_meta"]["total_records_returned"] == 1
     assert result["_meta"]["auth_required"] is True
     assert result["_meta"]["auth_present"] is True
     assert result["_meta"]["success"] is True
@@ -114,10 +114,10 @@ def test_nasa_emit_bbox_query():
         start_date="2023-08-01",
         end_date="2023-08-31",
     )
-    assert len(result["data"]) == 4
+    assert len(result["data"]) == 3
     assert result["_meta"]["source"] == "nasa_emit"
-    assert result["_meta"]["geometries_returned"] == 4
-    assert result["_meta"]["total_records_returned"] == 8
+    assert result["_meta"]["geometries_returned"] == 3
+    assert result["_meta"]["total_records_returned"] == 3
     assert result["_meta"]["auth_required"] is True
     assert result["_meta"]["auth_present"] is True
     assert result["_meta"]["success"] is True
