@@ -32,13 +32,13 @@ from env_data_mcp.helpers import point_to_bbox
 from env_data_mcp.sources.essdive import essdive_bbox_query, essdive_point_query
 from env_data_mcp.sources.gbif import gbif_occurrence_bbox_query, gbif_occurrence_point_query
 from env_data_mcp.sources.nasa_emit import nasa_emit_bbox_query, nasa_emit_point_query
+from env_data_mcp.sources.nasa_oco2 import nasa_oco2_bbox_query, nasa_oco2_point_query
 from env_data_mcp.sources.nasa_power import (
     nasa_power_merra2_bbox_query,
     nasa_power_merra2_point_query,
 )
 from env_data_mcp.sources.nasa_power._client import _clear_store_cache
 from env_data_mcp.sources.nasa_power._constants import TemporalResolution
-from env_data_mcp.sources.oco2 import oco2_bbox_query, oco2_query
 from env_data_mcp.sources.openaq import openaq_bbox_query, openaq_point_query
 from env_data_mcp.sources.soilgrids import soilgrids_bbox_query, soilgrids_point_query
 from env_data_mcp.sources.ssurgo import (
@@ -77,7 +77,7 @@ _SCENARIOS: list[dict[str, Any]] = [
 ]
 
 # Sources that are skipped for the 1-month scenario to stay inside the 5-min budget
-_SLOW_SOURCES = {"oco2", "nasa_emit"}
+_SLOW_SOURCES = {"nasa_emit"}
 
 
 # Small consistency-check bbox — 0.5° × 0.5° centred on the reference point
@@ -1012,40 +1012,43 @@ def test_essdive_point_bbox_consistent(_essdive_token):
 
 
 # ===========================================================================
-# OCO-2 — requires EARTHDATA_TOKEN; skip 1-month to stay within time budget
+# NASA OCO2 - requires EARTHDATA_TOKEN. Unlike EMIT, OCO2 fetches one whole-
+# globe file per day via a 10-way thread pool, so it stays fast even at 31
+# days (verified live: ~11 s) and the 1-month scenario is kept for a wider
+# n_days spread in the OLS fit.
 # ===========================================================================
 
-_OCO2_SCENARIOS = [s for s in _SCENARIOS if s["name"] != "1month"]
+_NASA_OCO2_SCENARIOS = _SCENARIOS
 
 
 @pytest.mark.integration
 @pytest.mark.benchmark
-@pytest.mark.parametrize("sc", _OCO2_SCENARIOS, ids=lambda s: s["name"])
-def test_oco2_timing(sc, _earthdata_token):
-    result = oco2_query(
+@pytest.mark.parametrize("sc", _NASA_OCO2_SCENARIOS, ids=lambda s: s["name"])
+def test_nasa_oco2_timing(sc, _earthdata_token):
+    result = nasa_oco2_point_query(
         latitude=_LAT,
         longitude=_LON,
         start_date=sc["start"],
         end_date=sc["end"],
     )
-    _assert_or_skip(result, "oco2")
-    _record("oco2", sc["name"], sc["n_days"], result)
+    _assert_or_skip(result, "nasa_oco2")
+    _record("nasa_oco2", sc["name"], sc["n_days"], result)
     assert result["_meta"]["latency_s"] <= _MAX_LATENCY_S
 
 
 @pytest.mark.integration
 @pytest.mark.benchmark
 @pytest.mark.parametrize("bz", _BBOX_SIZES, ids=lambda b: b["name"])
-@pytest.mark.parametrize("sc", _OCO2_SCENARIOS, ids=lambda s: s["name"])
-def test_oco2_bbox_timing(sc, bz, _earthdata_token):
-    result = oco2_bbox_query(
+@pytest.mark.parametrize("sc", _NASA_OCO2_SCENARIOS, ids=lambda s: s["name"])
+def test_nasa_oco2_bbox_timing(sc, bz, _earthdata_token):
+    result = nasa_oco2_bbox_query(
         **_make_bbox(_LAT, _LON, bz["half"]),
         start_date=sc["start"],
         end_date=sc["end"],
     )
-    _assert_or_skip(result, "oco2/bbox")
+    _assert_or_skip(result, "nasa_oco2/bbox")
     _record(
-        "oco2",
+        "nasa_oco2",
         f"{sc['name']}/bbox/{bz['name']}",
         sc["n_days"],
         result,
@@ -1057,35 +1060,35 @@ def test_oco2_bbox_timing(sc, bz, _earthdata_token):
 @pytest.mark.integration
 @pytest.mark.benchmark
 @pytest.mark.parametrize("loc", _EXTRA_LOCATIONS, ids=lambda loc: loc["name"])
-def test_oco2_extra_location_timing(loc, _earthdata_token):
-    result = oco2_query(
+def test_nasa_oco2_extra_location_timing(loc, _earthdata_token):
+    result = nasa_oco2_point_query(
         latitude=loc["lat"],
         longitude=loc["lon"],
         start_date="2019-08-15",
         end_date="2019-08-21",
     )
-    _assert_or_skip(result, f"oco2/{loc['name']}")
-    _record("oco2", "1week", 7, result, location=loc["name"])
+    _assert_or_skip(result, f"nasa_oco2/{loc['name']}")
+    _record("nasa_oco2", "1week", 7, result, location=loc["name"])
     assert result["_meta"]["latency_s"] <= _MAX_LATENCY_S
 
 
 @pytest.mark.integration
 @pytest.mark.benchmark
-def test_oco2_point_bbox_consistent(_earthdata_token):
-    pt = oco2_query(
+def test_nasa_oco2_point_bbox_consistent(_earthdata_token):
+    pt = nasa_oco2_point_query(
         latitude=_LAT,
         longitude=_LON,
         start_date="2019-08-19",
         end_date="2019-08-19",
     )
-    bx = oco2_bbox_query(
+    bx = nasa_oco2_bbox_query(
         **_BBOX,
         start_date="2019-08-19",
         end_date="2019-08-19",
     )
-    _assert_or_skip(pt, "oco2/point")
-    _assert_or_skip(bx, "oco2/bbox")
-    _check_geo_overlap(pt["data"], bx["data"], "oco2")
+    _assert_or_skip(pt, "nasa_oco2/point")
+    _assert_or_skip(bx, "nasa_oco2/bbox")
+    _check_geo_overlap(pt["data"], bx["data"], "nasa_oco2")
 
 
 # ===========================================================================

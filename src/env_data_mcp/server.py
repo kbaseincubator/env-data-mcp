@@ -35,7 +35,7 @@ from env_data_mcp.sources import ssurgo
 from env_data_mcp.sources import gbif
 from env_data_mcp.sources import tropomi
 from env_data_mcp.sources import openaq
-from env_data_mcp.sources import oco2
+from env_data_mcp.sources import nasa_oco2
 from env_data_mcp.sources import nasa_emit
 from env_data_mcp.sources import essdive
 

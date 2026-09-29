@@ -4,6 +4,7 @@ from .common import AdapterSpec
 from .test_essdive_live import ESSDIVE_SPEC
 from .test_gbif_live import OCCURRENCE_SPEC as GBIF_OCCURRENCE_SPEC
 from .test_nasa_emit_live import NASA_EMIT_SPEC
+from .test_nasa_oco2_live import NASA_OCO2_SPEC
 from .test_nasa_power_live import MERRA2_SPEC, SYN1DEG_SPEC
 from .test_openaq_live import OPENAQ_SPEC
 from .test_soilgrids_live import SOILGRIDS_SPEC
@@ -28,4 +29,6 @@ ALL_ADAPTER_SPECS: list[AdapterSpec] = [
     ESSDIVE_SPEC,
     # NASA EMIT
     NASA_EMIT_SPEC,
+    # NASA OCO2
+    NASA_OCO2_SPEC,
 ]
