@@ -14,7 +14,7 @@ SSURGO, SoilGrids, GBIF, TROPOMI, OpenAQ, ESS-DIVE, NASA EMIT, NASA OCO2).
 The **`feeds` family** (live events: EONET, USGS earthquakes, NASA FIRMS, NWS
 alerts, USGS Water Data, Open-Meteo) and six **point accessors** (Daymet, Macrostrat, 3DEP
 elevation, ARM, EIA, ERA5 via CDS) have been drafted and are awaiting refactoring to more
-closely follow the patterns applied in the fully function adapters.
+closely follow the patterns applied in the fully functional adapters.
 See "Feeds and point accessors" below.
 
 ---
